@@ -38,7 +38,10 @@ export default function Products() {
     if (search) params.set('search', search)
 
     fetch(`${apiBase}/api/products?${params}`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('API unavailable')
+        return res.json()
+      })
       .then((data: PaginatedResponse<Product>) => {
         if (data.products?.length > 0) {
           setProducts(data.products.map(p => ({

@@ -36,7 +36,10 @@ export default function Home() {
   useEffect(() => {
     const apiBase = import.meta.env.VITE_API_URL || ''
     fetch(`${apiBase}/api/products?featured=true&limit=8`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('API unavailable')
+        return res.json()
+      })
       .then((data: PaginatedResponse<Product>) => {
         if (data.products?.length > 0) {
           setProducts(data.products.map(p => ({
