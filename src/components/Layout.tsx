@@ -1,9 +1,16 @@
+import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Search, User, ShoppingCart, Globe, Menu } from 'lucide-react';
+import { Search, User, ShoppingCart, Globe, Menu, X } from 'lucide-react';
 
 export default function Layout() {
   const location = useLocation();
   const isLogin = location.pathname === '/login';
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // 切換頁面時自動關閉選單
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   if (isLogin) {
     return (
@@ -79,12 +86,36 @@ export default function Layout() {
                 <Globe className="h-4 w-4" />
                 <span className="text-sm font-medium">TW</span>
               </div>
-              <button className="md:hidden text-gray-600">
-                <Menu className="h-6 w-6" />
+              <button className="md:hidden text-gray-600" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-200 bg-white">
+            <nav className="flex flex-col px-4 py-3 space-y-1">
+              <Link to="/" className="px-3 py-2.5 rounded-lg text-gray-900 hover:bg-gray-100 font-medium">首頁</Link>
+              <Link to="/products" className="px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 font-medium">產品</Link>
+              <Link to="/about" className="px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 font-medium">關於我們</Link>
+              <Link to="/contact" className="px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 font-medium">聯絡我們</Link>
+            </nav>
+            <div className="px-4 pb-4">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-4 w-4 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-full bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  placeholder="搜尋商品"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
