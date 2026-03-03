@@ -48,6 +48,7 @@ export default function Home() {
           setProducts(fallbackProducts)
         }
       })
+      .catch(() => setProducts(fallbackProducts))
       .finally(() => setLoading(false))
   }, [])
 

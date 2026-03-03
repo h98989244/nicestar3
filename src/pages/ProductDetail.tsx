@@ -32,6 +32,15 @@ export default function ProductDetail() {
   const [activeImage, setActiveImage] = useState(0)
 
   useEffect(() => {
+    const useFallback = () => {
+      setProduct(null)
+      const defaults: Record<string, string> = {}
+      for (const v of fallbackProduct.variants) {
+        if (v.options?.length > 0) defaults[v.name] = v.options[0]
+      }
+      setSelectedVariants(defaults)
+    }
+
     fetchPublic<Product>(`/api/products/${id}`)
       .then(data => {
         if (data) {
@@ -44,14 +53,10 @@ export default function ProductDetail() {
           }
           setSelectedVariants(defaults)
         } else {
-          setProduct(null)
-          const defaults: Record<string, string> = {}
-          for (const v of fallbackProduct.variants) {
-            if (v.options?.length > 0) defaults[v.name] = v.options[0]
-          }
-          setSelectedVariants(defaults)
+          useFallback()
         }
       })
+      .catch(() => useFallback())
       .finally(() => setLoading(false))
   }, [id])
 

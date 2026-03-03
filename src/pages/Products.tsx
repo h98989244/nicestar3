@@ -52,6 +52,7 @@ export default function Products() {
           setProducts(fallbackProducts)
         }
       })
+      .catch(() => setProducts(fallbackProducts))
       .finally(() => setLoading(false))
   }, [searchParams])
 
