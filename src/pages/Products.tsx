@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ChevronUp, Star } from 'lucide-react'
+import { fetchPublic } from '../lib/api'
 import type { Product, PaginatedResponse } from '../types'
 
 const fallbackProducts = [
@@ -32,18 +33,13 @@ export default function Products() {
   useEffect(() => {
     const category = searchParams.get('category') || ''
     const search = searchParams.get('search') || ''
-    const apiBase = import.meta.env.VITE_API_URL || ''
     const params = new URLSearchParams({ limit: '20' })
     if (category) params.set('category', category)
     if (search) params.set('search', search)
 
-    fetch(`${apiBase}/api/products?${params}`)
-      .then(res => {
-        if (!res.ok) throw new Error('API unavailable')
-        return res.json()
-      })
-      .then((data: PaginatedResponse<Product>) => {
-        if (data.products?.length > 0) {
+    fetchPublic<PaginatedResponse<Product>>(`/api/products?${params}`)
+      .then(data => {
+        if (data?.products?.length) {
           setProducts(data.products.map(p => ({
             id: p.id,
             name: p.name,
@@ -56,7 +52,6 @@ export default function Products() {
           setProducts(fallbackProducts)
         }
       })
-      .catch(() => setProducts(fallbackProducts))
       .finally(() => setLoading(false))
   }, [searchParams])
 

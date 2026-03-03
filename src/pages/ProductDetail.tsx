@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
+import { fetchPublic } from '../lib/api'
 import type { Product } from '../types'
 
 const fallbackProduct = {
@@ -31,31 +32,25 @@ export default function ProductDetail() {
   const [activeImage, setActiveImage] = useState(0)
 
   useEffect(() => {
-    const apiBase = import.meta.env.VITE_API_URL || ''
-    fetch(`${apiBase}/api/products/${id}`)
-      .then(res => {
-        if (!res.ok) throw new Error('not found')
-        return res.json()
-      })
-      .then((data: Product) => {
-        setProduct(data)
-        // 設定預設變體選擇
-        const defaults: Record<string, string> = {}
-        if (data.variants && Array.isArray(data.variants)) {
-          for (const v of data.variants) {
+    fetchPublic<Product>(`/api/products/${id}`)
+      .then(data => {
+        if (data) {
+          setProduct(data)
+          const defaults: Record<string, string> = {}
+          if (data.variants && Array.isArray(data.variants)) {
+            for (const v of data.variants) {
+              if (v.options?.length > 0) defaults[v.name] = v.options[0]
+            }
+          }
+          setSelectedVariants(defaults)
+        } else {
+          setProduct(null)
+          const defaults: Record<string, string> = {}
+          for (const v of fallbackProduct.variants) {
             if (v.options?.length > 0) defaults[v.name] = v.options[0]
           }
+          setSelectedVariants(defaults)
         }
-        setSelectedVariants(defaults)
-      })
-      .catch(() => {
-        // 使用 fallback
-        setProduct(null)
-        const defaults: Record<string, string> = {}
-        for (const v of fallbackProduct.variants) {
-          if (v.options?.length > 0) defaults[v.name] = v.options[0]
-        }
-        setSelectedVariants(defaults)
       })
       .finally(() => setLoading(false))
   }, [id])
