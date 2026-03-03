@@ -1,5 +1,31 @@
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
+// 前台公開 API 呼叫，後端不可用時回傳 null
+let apiAvailable: boolean | null = null
+
+export async function fetchPublic<T>(path: string): Promise<T | null> {
+  if (apiAvailable === false) return null
+
+  try {
+    const res = await fetch(`${API_BASE}${path}`)
+    if (!res.ok) {
+      apiAvailable = false
+      return null
+    }
+    const contentType = res.headers.get('content-type') || ''
+    if (!contentType.includes('application/json')) {
+      apiAvailable = false
+      return null
+    }
+    const data = await res.json()
+    apiAvailable = true
+    return data as T
+  } catch {
+    apiAvailable = false
+    return null
+  }
+}
+
 function getToken(): string | null {
   return localStorage.getItem('admin_token')
 }

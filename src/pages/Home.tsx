@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Smartphone, Watch, BatteryCharging, Shield, Headphones, Zap, Plus } from 'lucide-react'
+import { fetchPublic } from '../lib/api'
 import type { Product, PaginatedResponse } from '../types'
 
 const categories = [
@@ -34,14 +35,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const apiBase = import.meta.env.VITE_API_URL || ''
-    fetch(`${apiBase}/api/products?featured=true&limit=8`)
-      .then(res => {
-        if (!res.ok) throw new Error('API unavailable')
-        return res.json()
-      })
-      .then((data: PaginatedResponse<Product>) => {
-        if (data.products?.length > 0) {
+    fetchPublic<PaginatedResponse<Product>>('/api/products?featured=true&limit=8')
+      .then(data => {
+        if (data?.products?.length) {
           setProducts(data.products.map(p => ({
             id: p.id,
             name: p.name,
@@ -52,7 +48,6 @@ export default function Home() {
           setProducts(fallbackProducts)
         }
       })
-      .catch(() => setProducts(fallbackProducts))
       .finally(() => setLoading(false))
   }, [])
 
