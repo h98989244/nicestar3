@@ -19,7 +19,7 @@ export default function Layout() {
           <Outlet />
         </main>
         <footer className="py-6 text-center text-sm text-gray-500">
-          © 2024 NICE-DA TECHNOLOGY. 版權所有。
+          © 2024 nicestar3 TECHNOLOGY. 版權所有。
         </footer>
       </div>
     );
@@ -43,7 +43,7 @@ export default function Layout() {
                   N
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-bold text-lg leading-tight tracking-tight">NICE-DA</span>
+                  <span className="font-bold text-lg leading-tight tracking-tight">nicestar3</span>
                   <span className="text-[10px] leading-tight font-medium tracking-widest text-gray-500">TECHNOLOGY</span>
                 </div>
               </Link>
@@ -133,7 +133,7 @@ export default function Layout() {
                   N
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-bold text-lg leading-tight tracking-tight text-white">NICE-DA</span>
+                  <span className="font-bold text-lg leading-tight tracking-tight text-white">nicestar3</span>
                   <span className="text-[10px] leading-tight font-medium tracking-widest text-gray-400">TECHNOLOGY</span>
                 </div>
               </Link>
@@ -163,7 +163,7 @@ export default function Layout() {
           
           <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-400">
-              © 2024 NICE-DA TECHNOLOGY. 版權所有。
+              © 2024 nicestar3 TECHNOLOGY. 版權所有。
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-gray-400 hover:text-white"><span className="sr-only">Facebook</span><svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" /></svg></a>

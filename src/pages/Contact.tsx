@@ -14,7 +14,7 @@ export default function Contact() {
             {/* Placeholder for Map */}
             <img src="https://picsum.photos/seed/map/800/400" alt="Map" className="w-full h-full object-cover" />
             <div className="absolute top-4 left-4 bg-white p-3 rounded-lg shadow-md">
-              <div className="font-bold text-gray-900 text-sm">NICE-DA TECHNOLOGY</div>
+              <div className="font-bold text-gray-900 text-sm">nicestar3 TECHNOLOGY</div>
               <div className="text-xs text-gray-500">香港辦公室</div>
             </div>
           </div>

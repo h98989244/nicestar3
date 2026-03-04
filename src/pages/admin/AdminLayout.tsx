@@ -21,7 +21,7 @@ export default function AdminLayout() {
       {/* 側邊欄 */}
       <aside className="w-64 bg-[#1a2332] text-white flex flex-col flex-shrink-0">
         <div className="p-6 border-b border-white/10">
-          <h1 className="text-lg font-bold">NICE-DA 管理後台</h1>
+          <h1 className="text-lg font-bold">nicestar3 管理後台</h1>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">

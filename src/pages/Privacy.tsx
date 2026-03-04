@@ -5,7 +5,7 @@ export default function Privacy() {
 
       <div className="bg-white rounded-2xl border border-gray-200 p-8 md:p-12 shadow-sm space-y-12">
         <p className="text-gray-600 leading-relaxed">
-          NICE-DA TECHNOLOGY (以下簡稱「我們」) 承諾保護您的隱私。本政策旨在讓您了解我們如何蒐集、使用、揭露、移轉及儲存您的個人資料。請您詳細閱讀本隱私權政策，以了解我們對您個人資料的處理方式。
+          nicestar3 TECHNOLOGY (以下簡稱「我們」) 承諾保護您的隱私。本政策旨在讓您了解我們如何蒐集、使用、揭露、移轉及儲存您的個人資料。請您詳細閱讀本隱私權政策，以了解我們對您個人資料的處理方式。
         </p>
 
         <section>
