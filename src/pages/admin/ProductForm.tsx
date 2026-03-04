@@ -120,13 +120,15 @@ export default function ProductForm() {
 
     try {
       if (isEdit) {
-        await api.put(`/api/admin/products/${productId}`, body)
-        navigate('/admin/products')
+        const updated = await api.put<Product>(`/api/admin/products/${productId}`, body)
+        setImages(updated.product_images || [])
+        alert('商品已更新')
       } else {
         const created = await api.post<Product>('/api/admin/products', body)
         setProductId(created.id)
         setImages(created.product_images || [])
         window.history.replaceState(null, '', `/admin/products/${created.id}/edit`)
+        alert('商品已建立，現在可以上傳圖片')
       }
     } catch (err) {
       alert(err instanceof Error ? err.message : '儲存失敗')
