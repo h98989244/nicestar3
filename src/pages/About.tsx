@@ -9,7 +9,7 @@ export default function About() {
           <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">關於我們</h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
             我們致力於將科技融入生活，打造無縫的智慧生活體驗。<br />
-            NICE-DA TECHNOLOGY，您的智慧生活領航人。
+            nicestar3 TECHNOLOGY，您的智慧生活領航人。
           </p>
           <button className="mt-8 px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full font-medium transition-colors backdrop-blur-sm">
             探索更多

@@ -11,7 +11,7 @@ export default function Login() {
               N
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-lg leading-tight tracking-tight text-blue-900">NICE-DA</span>
+              <span className="font-bold text-lg leading-tight tracking-tight text-blue-900">nicestar3</span>
               <span className="text-[10px] leading-tight font-medium tracking-widest text-blue-800">TECHNOLOGY</span>
             </div>
           </Link>

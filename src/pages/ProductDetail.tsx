@@ -5,7 +5,7 @@ import { fetchPublic } from '../lib/api'
 import type { Product } from '../types'
 
 const fallbackProduct = {
-  name: 'NICE-DA 超快速便攜式固態硬碟 2TB',
+  name: 'nicestar3 超快速便攜式固態硬碟 2TB',
   description: '專業級高速數據傳輸。USB-C 介面，耐用鋁合金外殼，讀取速度高達 1050MB/s。',
   price: 199.00,
   compare_at_price: null as number | null,

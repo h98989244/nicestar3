@@ -15,14 +15,14 @@ const categories = [
 ]
 
 const fallbackProducts = [
-  { id: '1', name: 'NICE-DA 超薄手機殼', price: 29.99, image: 'https://picsum.photos/seed/case1/400/400' },
-  { id: '2', name: 'NICE-DA 不鏽鋼錶帶', price: 29.99, image: 'https://picsum.photos/seed/band1/400/400' },
+  { id: '1', name: 'nicestar3 超薄手機殼', price: 29.99, image: 'https://picsum.photos/seed/case1/400/400' },
+  { id: '2', name: 'nicestar3 不鏽鋼錶帶', price: 29.99, image: 'https://picsum.photos/seed/band1/400/400' },
   { id: '3', name: '便攜式行動電源', price: 39.99, image: 'https://picsum.photos/seed/power1/400/400' },
-  { id: '4', name: 'NICE-DA 真無線耳機', price: 18.99, image: 'https://picsum.photos/seed/audio1/400/400' },
-  { id: '5', name: 'NICE-DA 超薄手機殼', price: 29.99, image: 'https://picsum.photos/seed/case2/400/400' },
-  { id: '6', name: 'NICE-DA 新款智慧充電器', price: 29.99, image: 'https://picsum.photos/seed/charger1/400/400' },
-  { id: '7', name: 'NICE-DA 真無線行動電源', price: 29.99, image: 'https://picsum.photos/seed/power2/400/400' },
-  { id: '8', name: 'NICE-DA 真無線手機殼', price: 39.99, image: 'https://picsum.photos/seed/case3/400/400' },
+  { id: '4', name: 'nicestar3 真無線耳機', price: 18.99, image: 'https://picsum.photos/seed/audio1/400/400' },
+  { id: '5', name: 'nicestar3 超薄手機殼', price: 29.99, image: 'https://picsum.photos/seed/case2/400/400' },
+  { id: '6', name: 'nicestar3 新款智慧充電器', price: 29.99, image: 'https://picsum.photos/seed/charger1/400/400' },
+  { id: '7', name: 'nicestar3 真無線行動電源', price: 29.99, image: 'https://picsum.photos/seed/power2/400/400' },
+  { id: '8', name: 'nicestar3 真無線手機殼', price: 39.99, image: 'https://picsum.photos/seed/case3/400/400' },
 ]
 
 function getProductImage(product: Product): string {
