@@ -81,15 +81,16 @@ router.post('/', requireAdmin, async (req: AuthRequest, res: Response) => {
     is_active, is_featured, specs, variants,
   } = req.body
 
-  if (!name || !slug) {
-    res.status(400).json({ error: '商品名稱和 slug 為必填' })
+  if (!name) {
+    res.status(400).json({ error: '商品名稱為必填' })
     return
   }
+  const finalSlug = slug || `product-${Date.now()}`
 
   const { data, error } = await supabaseAdmin
     .from('products')
     .insert({
-      name, slug, description, price: price || 0,
+      name, slug: finalSlug, description, price: price || 0,
       compare_at_price, category, brand, sku,
       stock_quantity: stock_quantity || 0,
       is_active: is_active ?? true,

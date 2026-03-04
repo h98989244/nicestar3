@@ -6,12 +6,13 @@ import ImageUpload from '../../components/ImageUpload'
 import type { Product, ProductImage } from '../../types'
 
 function slugify(text: string): string {
-  return text
+  const slug = text
     .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
     .replace(/[\s_]+/g, '-')
+    .replace(/[^\w\u4e00-\u9fff\u3400-\u4dbf-]/g, '')
     .replace(/-+/g, '-')
-    .trim()
+    .replace(/^-|-$/g, '')
+  return slug || `product-${Date.now()}`
 }
 
 const categories = [
