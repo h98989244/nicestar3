@@ -25,9 +25,11 @@ const categories = [
 ]
 
 export default function ProductForm() {
-  const { id } = useParams()
+  const { id: paramId } = useParams()
   const navigate = useNavigate()
-  const isEdit = Boolean(id)
+
+  const [productId, setProductId] = useState(paramId)
+  const isEdit = Boolean(productId)
 
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -49,9 +51,9 @@ export default function ProductForm() {
   })
 
   useEffect(() => {
-    if (!id) return
+    if (!productId) return
     setLoading(true)
-    api.get<Product>(`/api/admin/products/${id}`)
+    api.get<Product>(`/api/admin/products/${productId}`)
       .then(product => {
         setForm({
           name: product.name,
@@ -72,7 +74,7 @@ export default function ProductForm() {
       })
       .catch(err => alert(err instanceof Error ? err.message : '載入失敗'))
       .finally(() => setLoading(false))
-  }, [id])
+  }, [productId])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -117,13 +119,14 @@ export default function ProductForm() {
 
     try {
       if (isEdit) {
-        await api.put(`/api/admin/products/${id}`, body)
+        await api.put(`/api/admin/products/${productId}`, body)
+        navigate('/admin/products')
       } else {
         const created = await api.post<Product>('/api/admin/products', body)
-        navigate(`/admin/products/${created.id}/edit`, { replace: true })
-        return
+        setProductId(created.id)
+        setImages(created.product_images || [])
+        window.history.replaceState(null, '', `/admin/products/${created.id}/edit`)
       }
-      navigate('/admin/products')
     } catch (err) {
       alert(err instanceof Error ? err.message : '儲存失敗')
     } finally {
@@ -223,11 +226,15 @@ export default function ProductForm() {
         </div>
 
         {/* 圖片上傳 */}
-        {isEdit && id && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <ImageUpload productId={id} images={images} onImagesChange={setImages} />
-          </div>
-        )}
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          {productId ? (
+            <ImageUpload productId={productId} images={images} onImagesChange={setImages} />
+          ) : (
+            <div className="text-center py-8 text-gray-400">
+              <p className="text-sm">請先填寫商品資訊並點擊「建立商品」，即可上傳圖片</p>
+            </div>
+          )}
+        </div>
 
         {/* 送出按鈕 */}
         <div className="flex justify-end">
