@@ -61,6 +61,7 @@ export default function ImageUpload({ productId, images, onImagesChange }: Image
               </span>
             )}
             <button
+              type="button"
               onClick={() => handleDelete(img)}
               className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
             >
@@ -70,6 +71,7 @@ export default function ImageUpload({ productId, images, onImagesChange }: Image
         ))}
 
         <button
+          type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading || !productId}
           className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-blue-400 hover:text-blue-400 transition-colors disabled:opacity-50"

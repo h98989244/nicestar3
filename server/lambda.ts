@@ -27,4 +27,6 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-export const handler = serverless(app)
+export const handler = serverless(app, {
+  binary: ['multipart/form-data', 'image/*'],
+})
