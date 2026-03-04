@@ -1,48 +1,18 @@
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
-// 前台公開 API 呼叫，後端不可用時回傳 null
-let apiAvailable: boolean | null = null
-
-// 透過 HEAD 請求探測後端是否可用（不會在 console 產生 404 錯誤內容）
-async function probeApi(): Promise<boolean> {
-  try {
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 2000)
-    const res = await fetch(`${API_BASE}/api/health`, {
-      method: 'HEAD',
-      signal: controller.signal,
-    })
-    clearTimeout(timer)
-    return res.ok
-  } catch {
-    return false
-  }
-}
+// 生產環境且未設定 VITE_API_URL 時，後端不存在，直接跳過所有 API 呼叫
+const apiAvailable = !!(API_BASE || import.meta.env.DEV)
 
 export async function fetchPublic<T>(path: string): Promise<T | null> {
-  if (apiAvailable === false) return null
-
-  // 首次呼叫時先探測後端
-  if (apiAvailable === null) {
-    apiAvailable = await probeApi()
-    if (!apiAvailable) return null
-  }
+  if (!apiAvailable) return null
 
   try {
     const res = await fetch(`${API_BASE}${path}`)
-    if (!res.ok) {
-      apiAvailable = false
-      return null
-    }
+    if (!res.ok) return null
     const contentType = res.headers.get('content-type') || ''
-    if (!contentType.includes('application/json')) {
-      apiAvailable = false
-      return null
-    }
-    const data = await res.json()
-    return data as T
+    if (!contentType.includes('application/json')) return null
+    return await res.json() as T
   } catch {
-    apiAvailable = false
     return null
   }
 }
