@@ -1,60 +1,43 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { ChevronUp, Star } from 'lucide-react'
+import { ChevronUp } from 'lucide-react'
 import { fetchPublic } from '../lib/api'
 import type { Product, PaginatedResponse } from '../types'
 
-const fallbackProducts = [
-  { id: '101', name: '羅技 MX Master 3S 無線滑鼠', price: 99.99, rating: 5, reviews: 245, image: 'https://picsum.photos/seed/mouse1/400/400' },
-  { id: '102', name: 'Apple iPhone 15 Pro Max 矽膠保護殼 - MagSafe', price: 49.00, rating: 4, reviews: 1023, image: 'https://picsum.photos/seed/case4/400/400' },
-  { id: '103', name: 'Belkin BoostCharge Pro 3 合 1 無線充電器', price: 149.99, rating: 5, reviews: 350, image: 'https://picsum.photos/seed/charger2/400/400' },
-  { id: '104', name: 'Sony WH-1000XM5 Noise Cancelling Headphones', price: 348.00, rating: 5, reviews: 676, image: 'https://picsum.photos/seed/audio2/400/400' },
-  { id: '105', name: 'Razer BlackWidow V4 Pro Mechanical Gaming Keyboard', price: 229.99, rating: 4, reviews: 150, image: 'https://picsum.photos/seed/kb1/400/400' },
-  { id: '106', name: 'Belkin BoostCharge Pro 3 合 1 無線充電器', price: 149.99, rating: 5, reviews: 350, image: 'https://picsum.photos/seed/charger3/400/400' },
-  { id: '107', name: 'Logitech MX Master 3S Wireless Mouse', price: 99.99, rating: 5, reviews: 245, image: 'https://picsum.photos/seed/mouse2/400/400' },
-  { id: '108', name: 'Apple iPhone 15 Pro Max 矽膠保護殼 - with MagSafe', price: 49.00, rating: 4, reviews: 1023, image: 'https://picsum.photos/seed/case5/400/400' },
-  { id: '109', name: 'Sony WH-1000XM5 Noise Cancelling Headphones', price: 348.00, rating: 5, reviews: 676, image: 'https://picsum.photos/seed/audio3/400/400' },
-  { id: '110', name: 'Logitech MX Master 3S Wireless Mouse', price: 99.99, rating: 5, reviews: 245, image: 'https://picsum.photos/seed/mouse3/400/400' },
-  { id: '111', name: 'Sony WH-1000XM5 Noise Cancelling Headphones', price: 348.00, rating: 5, reviews: 876, image: 'https://picsum.photos/seed/audio4/400/400' },
-  { id: '112', name: 'Razer BlackWidow V4 Pro Mechanical Gaming Keyboard', price: 229.99, rating: 4, reviews: 150, image: 'https://picsum.photos/seed/kb2/400/400' },
-]
-
 function getProductImage(product: Product): string {
   const primary = product.product_images?.find(img => img.is_primary)
-  return primary?.url || product.product_images?.[0]?.url || 'https://picsum.photos/seed/placeholder/400/400'
+  return primary?.url || product.product_images?.[0]?.url || ''
 }
 
 export default function Products() {
   const [searchParams] = useSearchParams()
   const [priceRange] = useState([20, 500])
-  const [products, setProducts] = useState<Array<{ id: string; name: string; price: number; rating: number; reviews: number; image: string }>>([])
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [totalPages, setTotalPages] = useState(1)
+  const [page, setPage] = useState(1)
 
-  useEffect(() => {
+  const loadProducts = (p = 1) => {
+    setLoading(true)
     const category = searchParams.get('category') || ''
     const search = searchParams.get('search') || ''
-    const params = new URLSearchParams({ limit: '20' })
+    const params = new URLSearchParams({ limit: '20', page: String(p) })
     if (category) params.set('category', category)
     if (search) params.set('search', search)
 
     fetchPublic<PaginatedResponse<Product>>(`/api/products?${params}`)
       .then(data => {
-        if (data?.products?.length) {
-          setProducts(data.products.map(p => ({
-            id: p.id,
-            name: p.name,
-            price: Number(p.price),
-            rating: 5,
-            reviews: 0,
-            image: getProductImage(p),
-          })))
-        } else {
-          setProducts(fallbackProducts)
+        if (data?.products) {
+          setProducts(data.products)
+          setTotalPages(data.pagination?.totalPages || 1)
+          setPage(p)
         }
       })
-      .catch(() => setProducts(fallbackProducts))
+      .catch(() => {})
       .finally(() => setLoading(false))
-  }, [searchParams])
+  }
+
+  useEffect(() => { loadProducts() }, [searchParams])
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -148,35 +131,60 @@ export default function Products() {
             <div className="flex justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
             </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <p>目前沒有符合條件的商品</p>
+            </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <div key={product.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex flex-col">
-                  <Link to={`/product/${product.id}`} className="block aspect-square bg-gray-50 relative p-6">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
-                  </Link>
-                  <div className="p-4 flex flex-col flex-grow">
-                    <Link to={`/product/${product.id}`} className="text-sm font-medium text-gray-900 mb-1 hover:text-blue-600 line-clamp-2">
-                      {product.name}
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products.map((product) => (
+                  <div key={product.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex flex-col">
+                    <Link to={`/product/${product.id}`} className="block aspect-square bg-gray-50 relative p-6">
+                      {getProductImage(product) ? (
+                        <img src={getProductImage(product)} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm">暫無圖片</div>
+                      )}
                     </Link>
-                    <div className="flex items-center gap-1 mb-2">
-                      <div className="flex text-yellow-400">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`h-3 w-3 ${i < product.rating ? 'fill-current' : 'text-gray-300'}`} />
-                        ))}
+                    <div className="p-4 flex flex-col flex-grow">
+                      <Link to={`/product/${product.id}`} className="text-sm font-medium text-gray-900 mb-1 hover:text-blue-600 line-clamp-2">
+                        {product.name}
+                      </Link>
+                      {product.category && (
+                        <span className="text-xs text-gray-500 mb-2">{product.category}</span>
+                      )}
+                      <div className="mt-auto">
+                        <div className="flex items-baseline gap-2 mb-4">
+                          <span className="text-lg font-bold text-gray-900">${Number(product.price).toFixed(2)}</span>
+                          {product.compare_at_price && Number(product.compare_at_price) > Number(product.price) && (
+                            <span className="text-sm text-gray-400 line-through">${Number(product.compare_at_price).toFixed(2)}</span>
+                          )}
+                        </div>
+                        <button className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                          加入購物車
+                        </button>
                       </div>
-                      <span className="text-xs text-gray-500">({product.reviews})</span>
-                    </div>
-                    <div className="mt-auto">
-                      <div className="text-lg font-bold text-gray-900 mb-4">${product.price}</div>
-                      <button className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                        加入購物車
-                      </button>
                     </div>
                   </div>
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className="flex justify-center gap-2 mt-8">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                    <button
+                      key={p}
+                      onClick={() => loadProducts(p)}
+                      className={`px-3 py-1.5 rounded text-sm ${
+                        p === page ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>
