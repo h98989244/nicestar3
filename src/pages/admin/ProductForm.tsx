@@ -229,23 +229,6 @@ export default function ProductForm() {
           </div>
         )}
 
-        {/* 規格與變體 */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">規格與變體（JSON）</h2>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">規格 (specs)</label>
-            <textarea name="specs" value={form.specs} onChange={handleChange} rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder='{"容量": "2TB", "介面": "USB-C"}' />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">變體 (variants)</label>
-            <textarea name="variants" value={form.variants} onChange={handleChange} rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder='[{"name": "顏色", "options": ["太空灰", "銀色"]}]' />
-          </div>
-        </div>
-
         {/* 送出按鈕 */}
         <div className="flex justify-end">
           <button
