@@ -141,13 +141,19 @@ router.put('/:id', requireAdmin, async (req: AuthRequest, res: Response) => {
   res.json(data)
 })
 
-// DELETE /api/admin/products/:id — 管理員：軟刪除商品
+// DELETE /api/admin/products/:id — 管理員：刪除商品
 router.delete('/:id', requireAdmin, async (req: AuthRequest, res: Response) => {
   const { id } = req.params
 
+  // 先刪除關聯的圖片記錄
+  await supabaseAdmin
+    .from('product_images')
+    .delete()
+    .eq('product_id', id)
+
   const { error } = await supabaseAdmin
     .from('products')
-    .update({ is_active: false })
+    .delete()
     .eq('id', id)
 
   if (error) {
@@ -155,7 +161,7 @@ router.delete('/:id', requireAdmin, async (req: AuthRequest, res: Response) => {
     return
   }
 
-  res.json({ message: '商品已下架' })
+  res.json({ message: '商品已刪除' })
 })
 
 export default router

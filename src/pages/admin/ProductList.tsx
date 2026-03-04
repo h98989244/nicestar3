@@ -36,7 +36,7 @@ export default function ProductList() {
   }
 
   const handleDelete = async (product: Product) => {
-    if (!confirm(`確定要下架「${product.name}」嗎？`)) return
+    if (!confirm(`確定要刪除「${product.name}」嗎？此操作無法復原。`)) return
     try {
       await api.delete(`/api/admin/products/${product.id}`)
       loadProducts(page)
