@@ -5,7 +5,8 @@ import { requireAdmin, type AuthRequest } from '../middleware/auth'
 
 const router = Router()
 
-// GET /api/products — 公開：商品列表（分頁、分類篩選）
+// GET /api/products — 商品列表（分頁、分類篩選）
+// 公開路由只顯示上架商品；管理員路由（/api/admin/products）顯示全部
 router.get('/', async (req, res) => {
   const {
     category,
@@ -17,6 +18,8 @@ router.get('/', async (req, res) => {
     order = 'desc',
   } = req.query as Record<string, string>
 
+  const isAdmin = req.baseUrl.includes('/admin')
+
   const pageNum = Math.max(1, parseInt(page))
   const limitNum = Math.min(100, Math.max(1, parseInt(limit)))
   const from = (pageNum - 1) * limitNum
@@ -25,7 +28,8 @@ router.get('/', async (req, res) => {
   let query = supabaseAdmin
     .from('products')
     .select('*, product_images(*)', { count: 'exact' })
-    .eq('is_active', true)
+
+  if (!isAdmin) query = query.eq('is_active', true)
 
   if (category) query = query.eq('category', category)
   if (featured === 'true') query = query.eq('is_featured', true)
@@ -54,16 +58,20 @@ router.get('/', async (req, res) => {
   })
 })
 
-// GET /api/products/:id — 公開：單一商品（含圖片）
+// GET /api/products/:id — 單一商品（含圖片）
+// 公開路由只顯示上架商品；管理員路由顯示全部
 router.get('/:id', async (req, res) => {
   const { id } = req.params
+  const isAdmin = req.baseUrl.includes('/admin')
 
-  const { data, error } = await supabaseAdmin
+  let query = supabaseAdmin
     .from('products')
     .select('*, product_images(*)')
     .eq('id', id)
-    .eq('is_active', true)
-    .single()
+
+  if (!isAdmin) query = query.eq('is_active', true)
+
+  const { data, error } = await query.single()
 
   if (error || !data) {
     res.status(404).json({ error: '找不到商品' })
