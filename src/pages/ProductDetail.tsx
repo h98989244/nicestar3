@@ -4,25 +4,6 @@ import { ChevronRight } from 'lucide-react'
 import { fetchPublic } from '../lib/api'
 import type { Product } from '../types'
 
-const fallbackProduct = {
-  name: 'nicestar3 超快速便攜式固態硬碟 2TB',
-  description: '專業級高速數據傳輸。USB-C 介面，耐用鋁合金外殼，讀取速度高達 1050MB/s。',
-  price: 199.00,
-  compare_at_price: null as number | null,
-  stock_quantity: 5,
-  specs: {} as Record<string, string>,
-  variants: [
-    { name: '顏色', options: ['太空灰', '銀色'] },
-    { name: '型號', options: ['1TB', '2TB'] },
-  ],
-  images: [
-    'https://picsum.photos/seed/ssd1/600/600',
-    'https://picsum.photos/seed/ssd2/200/200',
-    'https://picsum.photos/seed/ssd3/200/200',
-    'https://picsum.photos/seed/ssd4/200/200',
-  ],
-}
-
 export default function ProductDetail() {
   const { id } = useParams()
   const [product, setProduct] = useState<Product | null>(null)
@@ -32,15 +13,6 @@ export default function ProductDetail() {
   const [activeImage, setActiveImage] = useState(0)
 
   useEffect(() => {
-    const useFallback = () => {
-      setProduct(null)
-      const defaults: Record<string, string> = {}
-      for (const v of fallbackProduct.variants) {
-        if (v.options?.length > 0) defaults[v.name] = v.options[0]
-      }
-      setSelectedVariants(defaults)
-    }
-
     fetchPublic<Product>(`/api/products/${id}`)
       .then(data => {
         if (data) {
@@ -52,11 +24,9 @@ export default function ProductDetail() {
             }
           }
           setSelectedVariants(defaults)
-        } else {
-          useFallback()
         }
       })
-      .catch(() => useFallback())
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [id])
 
@@ -68,17 +38,29 @@ export default function ProductDetail() {
     )
   }
 
-  const name = product?.name || fallbackProduct.name
-  const description = product?.description || fallbackProduct.description
-  const price = product ? Number(product.price) : fallbackProduct.price
-  const comparePrice = product?.compare_at_price ? Number(product.compare_at_price) : fallbackProduct.compare_at_price
-  const stock = product?.stock_quantity ?? fallbackProduct.stock_quantity
-  const specs = product?.specs || fallbackProduct.specs
-  const variants = (product?.variants && Array.isArray(product.variants) ? product.variants : fallbackProduct.variants)
+  if (!product) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">找不到此商品</h2>
+        <p className="text-gray-500 mb-8">商品可能已下架或不存在</p>
+        <Link to="/products" className="inline-block bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+          瀏覽所有商品
+        </Link>
+      </div>
+    )
+  }
 
-  const images = product?.product_images?.length
+  const name = product.name
+  const description = product.description || ''
+  const price = Number(product.price)
+  const comparePrice = product.compare_at_price ? Number(product.compare_at_price) : null
+  const stock = product.stock_quantity ?? 0
+  const specs = product.specs || {}
+  const variants = Array.isArray(product.variants) ? product.variants : []
+
+  const images = product.product_images?.length
     ? product.product_images.sort((a, b) => a.display_order - b.display_order).map(img => img.url)
-    : fallbackProduct.images
+    : []
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -107,19 +89,25 @@ export default function ProductDetail() {
         {/* Product Images */}
         <div className="space-y-4">
           <div className="aspect-square bg-white rounded-2xl border border-gray-200 p-8 flex items-center justify-center">
-            <img src={images[activeImage] || images[0]} alt={name} className="w-full h-full object-contain mix-blend-multiply" />
+            {images.length > 0 ? (
+              <img src={images[activeImage] || images[0]} alt={name} className="w-full h-full object-contain mix-blend-multiply" />
+            ) : (
+              <div className="text-gray-300 text-lg">暫無圖片</div>
+            )}
           </div>
-          <div className="grid grid-cols-4 gap-4">
-            {images.slice(0, 4).map((img, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveImage(i)}
-                className={`aspect-square bg-white rounded-xl border p-2 flex items-center justify-center ${i === activeImage ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200 hover:border-gray-300'}`}
-              >
-                <img src={img} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-contain mix-blend-multiply" />
-              </button>
-            ))}
-          </div>
+          {images.length > 1 && (
+            <div className="grid grid-cols-4 gap-4">
+              {images.slice(0, 4).map((img, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveImage(i)}
+                  className={`aspect-square bg-white rounded-xl border p-2 flex items-center justify-center ${i === activeImage ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200 hover:border-gray-300'}`}
+                >
+                  <img src={img} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-contain mix-blend-multiply" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Product Info */}
@@ -139,7 +127,7 @@ export default function ProductDetail() {
             </div>
           )}
 
-          <div className="space-y-6 mb-8">
+          {variants.length > 0 && <div className="space-y-6 mb-8">
             {variants.map(variant => (
               <div key={variant.name}>
                 <h3 className="text-sm font-medium text-gray-900 mb-3">{variant.name}</h3>
@@ -160,7 +148,7 @@ export default function ProductDetail() {
                 </div>
               </div>
             ))}
-          </div>
+          </div>}
 
           <div className="flex gap-4 mt-auto">
             <button className="flex-1 bg-blue-600 text-white py-3.5 rounded-xl font-medium hover:bg-blue-700 transition-colors">

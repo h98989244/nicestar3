@@ -14,20 +14,9 @@ const categories = [
   { name: '配件', icon: Plus, path: '/products?category=accessories' },
 ]
 
-const fallbackProducts = [
-  { id: '1', name: 'nicestar3 超薄手機殼', price: 29.99, image: 'https://picsum.photos/seed/case1/400/400' },
-  { id: '2', name: 'nicestar3 不鏽鋼錶帶', price: 29.99, image: 'https://picsum.photos/seed/band1/400/400' },
-  { id: '3', name: '便攜式行動電源', price: 39.99, image: 'https://picsum.photos/seed/power1/400/400' },
-  { id: '4', name: 'nicestar3 真無線耳機', price: 18.99, image: 'https://picsum.photos/seed/audio1/400/400' },
-  { id: '5', name: 'nicestar3 超薄手機殼', price: 29.99, image: 'https://picsum.photos/seed/case2/400/400' },
-  { id: '6', name: 'nicestar3 新款智慧充電器', price: 29.99, image: 'https://picsum.photos/seed/charger1/400/400' },
-  { id: '7', name: 'nicestar3 真無線行動電源', price: 29.99, image: 'https://picsum.photos/seed/power2/400/400' },
-  { id: '8', name: 'nicestar3 真無線手機殼', price: 39.99, image: 'https://picsum.photos/seed/case3/400/400' },
-]
-
 function getProductImage(product: Product): string {
   const primary = product.product_images?.find(img => img.is_primary)
-  return primary?.url || product.product_images?.[0]?.url || 'https://picsum.photos/seed/placeholder/400/400'
+  return primary?.url || product.product_images?.[0]?.url || ''
 }
 
 export default function Home() {
@@ -35,7 +24,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchPublic<PaginatedResponse<Product>>('/api/products?featured=true&limit=8')
+    fetchPublic<PaginatedResponse<Product>>('/api/products?limit=8')
       .then(data => {
         if (data?.products?.length) {
           setProducts(data.products.map(p => ({
@@ -44,11 +33,9 @@ export default function Home() {
             price: Number(p.price),
             image: getProductImage(p),
           })))
-        } else {
-          setProducts(fallbackProducts)
         }
       })
-      .catch(() => setProducts(fallbackProducts))
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 
@@ -95,12 +82,20 @@ export default function Home() {
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
           </div>
+        ) : products.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">
+            <p>目前沒有商品，敬請期待！</p>
+          </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map((product) => (
               <div key={product.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex flex-col">
                 <Link to={`/product/${product.id}`} className="block aspect-square bg-gray-50 relative p-6">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
+                  {product.image ? (
+                    <img src={product.image} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm">暫無圖片</div>
+                  )}
                 </Link>
                 <div className="p-4 flex flex-col flex-grow">
                   <Link to={`/product/${product.id}`} className="text-sm font-medium text-gray-900 mb-2 hover:text-blue-600 line-clamp-2">
