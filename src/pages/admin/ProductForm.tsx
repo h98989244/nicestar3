@@ -80,7 +80,7 @@ export default function ProductForm() {
     setForm(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
-      ...(name === 'name' && !isEdit ? { slug: slugify(value) } : {}),
+      ...(name === 'name' ? { slug: slugify(value) } : {}),
     }))
   }
 
@@ -153,17 +153,10 @@ export default function ProductForm() {
         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">基本資訊</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">商品名稱 *</label>
-              <input name="name" value={form.name} onChange={handleChange} required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
-              <input name="slug" value={form.slug} onChange={handleChange} required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">商品名稱 *</label>
+            <input name="name" value={form.name} onChange={handleChange} required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div>
