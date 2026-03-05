@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs wc:*)",
+      "Bash(test:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm approve-builds:*)",
+      "Bash(pnpm install:*)",
+      "Bash(rm:*)",
+      "Bash(pnpm run:*)",
+      "Bash(supabase:*)",
+      "Bash(gh repo:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(node:*)",
+      "Bash(DISABLE_HMR=true npx vite:*)",
+      "Bash(timeout 10 npx vite:*)",
+      "Bash(aws sts:*)",
+      "Bash(npx esbuild:*)",
+      "Bash(zip:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(aws lambda:*)",
+      "Bash(aws iam:*)",
+      "Bash(aws:*)",
+      "Bash(curl:*)",
+      "Bash(/c/Users/user/rules.json:*)",
+      "Bash(python3:*)",
+      "Bash(__NEW_LINE_1c468f1d8dfe0dbe__ curl:*)",
+      "Bash(MSYS_NO_PATHCONV=1 aws logs:*)",
+      "Bash(ls -la /c/Users/user/Desktop/奈斯達科技有限公司/*.json /c/Users/user/Desktop/奈斯達科技有限公司/*.yml /c/Users/user/Desktop/奈斯達科技有限公司/*.yaml)",
+      "Bash(ls -la /c/Users/user/Desktop/奈斯達科技有限公司/.env*)",
+      "Bash(TOKEN=\"eyJhbGciOiJFUzI1NiIsImtpZCI6IjlhMWQyYjYwLTJiOTktNGU4NC05Yjk0LWY2YTAyNTAxMjE5NyIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2tqa2piemxscW1uZWVoZGl2cG50LnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIyYzNjY2M1MC01YzAwLTRhMGItODZhOS1jOTIxYWVjMDM1NDgiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzcyNjU3Mjk3LCJpYXQiOjE3NzI2NTM2OTcsImVtYWlsIjoiYWRtaW5AbmljZWRhLmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWxfdmVyaWZpZWQiOnRydWV9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzcyNjUzNjk3fV0sInNlc3Npb25faWQiOiJiNDI2ZjIzNS05NWUwLTRmNDMtOGEwZS1iYzNhZTlmYzZhNzIiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.IOknPmQllCYxNyTHfEIHkwL0SdXiBn7bsMHSrGo727uOvbRw1dwidkvL-CwCkz3_AjdhWk1fnpdNlfmxzLBv3A\")",
+      "Bash(__NEW_LINE_f0d061f5f4749422__ curl -v \"https://tusvztnsef.execute-api.ap-southeast-1.amazonaws.com/api/admin/products?limit=1\" -H \"Authorization: Bearer $TOKEN\")",
+      "Bash(npx supabase --version)",
+      "Bash(npx supabase projects list)",
+      "Bash(npx supabase:*)",
+      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(f\"\"{i[''id'']} - {i[''name'']}\"\"\\) for i in data.get\\(''items'',[]\\)]\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d[''Configuration''][''LastUpdateStatus'']\\)\")"
+    ]
+  }
+}

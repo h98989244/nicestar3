@@ -31,7 +31,7 @@ export default function Terms() {
       {/* Content */}
       <div className="flex-1 bg-white rounded-2xl border border-gray-200 p-8 md:p-12 shadow-sm">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">服務條款 (Terms of Service)</h1>
-        <p className="text-sm text-gray-500 mb-12">最後更新日期：2024年5月15日</p>
+        <p className="text-sm text-gray-500 mb-12">最後更新日期：2026年5月15日</p>
 
         <div className="space-y-12">
           <section id="member">
