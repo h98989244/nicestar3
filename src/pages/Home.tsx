@@ -43,7 +43,7 @@ export default function Home() {
       {/* Hero Banner */}
       <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-slate-800 to-slate-900 aspect-[21/9] flex items-center mb-12">
         <div className="absolute inset-0">
-          <img src="https://picsum.photos/seed/hero/1200/500" alt="Hero" className="w-full h-full object-cover opacity-40 mix-blend-overlay" />
+          <img src="/pic4.png" alt="Hero" className="w-full h-full object-cover opacity-40 mix-blend-overlay" />
         </div>
         <div className="relative z-10 w-full text-center px-4">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">

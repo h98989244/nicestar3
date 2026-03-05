@@ -16,9 +16,6 @@ export default function About() {
             {store.description || '我們致力於將科技融入生活，打造無縫的智慧生活體驗。'}<br />
             {displayName}{subtitle}，您的智慧生活領航人。
           </p>
-          <button className="mt-8 px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full font-medium transition-colors backdrop-blur-sm">
-            探索更多
-          </button>
         </div>
 
         {/* Brand Philosophy */}
