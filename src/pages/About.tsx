@@ -4,7 +4,6 @@ import { useStore } from '../contexts/StoreContext';
 export default function About() {
   const store = useStore();
   const displayName = store.site_name || '奈斯達科技';
-  const subtitle = store.brand_subtitle || '';
 
   return (
     <div className="bg-[#1a2332] text-white min-h-screen">
@@ -14,7 +13,7 @@ export default function About() {
           <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">關於我們</h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
             {store.description || '我們致力於將科技融入生活，打造無縫的智慧生活體驗。'}<br />
-            {displayName}{subtitle}，您的智慧生活領航人。
+            {displayName}，您的智慧生活領航人。
           </p>
         </div>
 
