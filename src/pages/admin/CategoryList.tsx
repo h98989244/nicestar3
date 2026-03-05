@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Plus, Pencil, Trash2, X, Check } from 'lucide-react'
+import * as LucideIcons from 'lucide-react'
 import { api } from '../../lib/api'
+
+function getLucideIcon(name: string): LucideIcons.LucideIcon {
+  const icon = (LucideIcons as Record<string, unknown>)[name]
+  if (typeof icon === 'function') return icon as LucideIcons.LucideIcon
+  return LucideIcons.Box
+}
 
 interface Category {
   id: string
@@ -202,7 +209,14 @@ export default function CategoryList() {
                     <td className="px-4 py-3 text-sm text-gray-600">{cat.display_order}</td>
                     <td className="px-4 py-3 text-sm font-medium text-gray-900">{cat.name}</td>
                     <td className="px-4 py-3 text-sm text-gray-600 font-mono">{cat.slug}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{cat.icon}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">
+                      {(() => { const Icon = getLucideIcon(cat.icon); return (
+                        <div className="flex items-center gap-2">
+                          <Icon className="h-5 w-5" />
+                          <span className="text-xs text-gray-400">{cat.icon}</span>
+                        </div>
+                      ) })()}
+                    </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${cat.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                         {cat.is_active ? '啟用' : '停用'}
