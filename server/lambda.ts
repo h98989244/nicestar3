@@ -8,6 +8,7 @@ import uploadRouter from './routes/upload'
 import authRouter from './routes/auth'
 import memberAuthRouter from './routes/member-auth'
 import ordersRouter from './routes/orders'
+import categoriesRouter from './routes/categories'
 
 const app = express()
 
@@ -55,12 +56,14 @@ app.use('/api/auth', memberAuthRouter)
 app.use('/api/orders', ordersRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/store-info', storeInfoRouter)
+app.use('/api/categories', categoriesRouter)
 
 // 管理員路由
 app.use('/api/admin/auth', authRouter)
 app.use('/api/admin/products', productsRouter)
 app.use('/api/admin/upload', uploadRouter)
 app.use('/api/admin/store-info', storeInfoRouter)
+app.use('/api/admin/categories', categoriesRouter)
 
 // Health check
 app.get('/api/health', (_req, res) => {

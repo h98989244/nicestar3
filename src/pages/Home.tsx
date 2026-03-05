@@ -1,20 +1,25 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Smartphone, Watch, BatteryCharging, Shield, Headphones, Zap, Plus } from 'lucide-react'
+import * as LucideIcons from 'lucide-react'
 import { fetchPublic } from '../lib/api'
 import { useCart } from '../contexts/CartContext'
 import { useStore } from '../contexts/StoreContext'
 import type { Product, PaginatedResponse } from '../types'
 
-const categories = [
-  { name: '手機殼', icon: Smartphone, path: '/products?category=cases' },
-  { name: '錶帶', icon: Watch, path: '/products?category=bands' },
-  { name: '充電器', icon: BatteryCharging, path: '/products?category=chargers' },
-  { name: '螢幕保護貼', icon: Shield, path: '/products?category=protectors' },
-  { name: '耳機', icon: Headphones, path: '/products?category=audio' },
-  { name: '行動電源', icon: Zap, path: '/products?category=powerbanks' },
-  { name: '配件', icon: Plus, path: '/products?category=accessories' },
-]
+interface Category {
+  id: string
+  name: string
+  slug: string
+  icon: string
+  display_order: number
+  is_active: boolean
+}
+
+function getLucideIcon(name: string): LucideIcons.LucideIcon {
+  const icon = (LucideIcons as Record<string, unknown>)[name]
+  if (typeof icon === 'function') return icon as LucideIcons.LucideIcon
+  return LucideIcons.Package
+}
 
 function getProductImage(product: Product): string {
   const primary = product.product_images?.find(img => img.is_primary)
@@ -23,11 +28,16 @@ function getProductImage(product: Product): string {
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const { addItem } = useCart()
   const store = useStore()
 
   useEffect(() => {
+    fetchPublic<Category[]>('/api/categories')
+      .then(data => { if (data?.length) setCategories(data) })
+      .catch(() => {})
+
     fetchPublic<PaginatedResponse<Product>>('/api/products?limit=8')
       .then(data => {
         if (data?.products?.length) {
@@ -54,25 +64,22 @@ export default function Home() {
             立即選購
           </Link>
         </div>
-
-        {/* Carousel Indicators */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          <div className="w-8 h-1.5 bg-white rounded-full"></div>
-          <div className="w-1.5 h-1.5 bg-white/50 rounded-full"></div>
-          <div className="w-1.5 h-1.5 bg-white/50 rounded-full"></div>
-          <div className="w-1.5 h-1.5 bg-white/50 rounded-full"></div>
-        </div>
       </div>
 
       {/* Categories */}
-      <div className="grid grid-cols-4 md:grid-cols-7 gap-4 mb-16">
-        {categories.map((category) => (
-          <Link key={category.name} to={category.path} className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-            <category.icon className="h-8 w-8 text-gray-700 mb-3" strokeWidth={1.5} />
-            <span className="text-sm font-medium text-gray-900">{category.name}</span>
-          </Link>
-        ))}
-      </div>
+      {categories.length > 0 && (
+        <div className="grid grid-cols-4 md:grid-cols-7 gap-4 mb-16">
+          {categories.map((category) => {
+            const Icon = getLucideIcon(category.icon)
+            return (
+              <Link key={category.id} to={`/products?category=${category.slug}`} className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                <Icon className="h-8 w-8 text-gray-700 mb-3" strokeWidth={1.5} />
+                <span className="text-sm font-medium text-gray-900">{category.name}</span>
+              </Link>
+            )
+          })}
+        </div>
+      )}
 
       {/* Hot Products */}
       <div>

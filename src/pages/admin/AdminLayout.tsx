@@ -1,11 +1,12 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Package, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, Package, Tags, Settings, LogOut } from 'lucide-react'
 import { clearToken } from '../../lib/api'
 import { useStore } from '../../contexts/StoreContext'
 
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: '儀表板', end: true },
   { to: '/admin/products', icon: Package, label: '商品管理', end: false },
+  { to: '/admin/categories', icon: Tags, label: '分類管理', end: false },
   { to: '/admin/settings', icon: Settings, label: '店家設定', end: false },
 ]
 

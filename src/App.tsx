@@ -20,6 +20,7 @@ import Dashboard from './pages/admin/Dashboard'
 import ProductList from './pages/admin/ProductList'
 import ProductForm from './pages/admin/ProductForm'
 import StoreSettings from './pages/admin/StoreSettings'
+import CategoryList from './pages/admin/CategoryList'
 
 export default function App() {
   return (
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="products" element={<ProductList />} />
             <Route path="products/new" element={<ProductForm />} />
             <Route path="products/:id/edit" element={<ProductForm />} />
+            <Route path="categories" element={<CategoryList />} />
             <Route path="settings" element={<StoreSettings />} />
           </Route>
         </Route>
