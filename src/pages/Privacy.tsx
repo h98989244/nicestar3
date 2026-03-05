@@ -3,7 +3,7 @@ import { useStore } from '../contexts/StoreContext';
 export default function Privacy() {
   const store = useStore();
   const displayName = store.site_name || '奈斯達科技';
-  const contactEmail = store.email || 'support@niceda.tech';
+  const contactEmail = store.email;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
