@@ -9,44 +9,11 @@ export default function About() {
           <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">關於我們</h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
             我們致力於將科技融入生活，打造無縫的智慧生活體驗。<br />
-            nicestar3 TECHNOLOGY，您的智慧生活領航人。
+            奈斯達科技TECHNOLOGY，您的智慧生活領航人。
           </p>
           <button className="mt-8 px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full font-medium transition-colors backdrop-blur-sm">
             探索更多
           </button>
-        </div>
-
-        {/* Story Timeline */}
-        <div className="mb-24">
-          <h2 className="text-3xl font-bold text-center mb-12">我們的故事</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-            {/* Connecting Line */}
-            <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-blue-500/30 -translate-y-1/2 z-0"></div>
-            
-            <div className="relative z-10 bg-[#232d3f] p-6 rounded-2xl border border-white/10">
-              <img src="https://picsum.photos/seed/office1/400/250" alt="2026" className="w-full h-40 object-cover rounded-xl mb-6" />
-              <h3 className="text-xl font-bold text-blue-400 mb-2">2026年 成立</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                創立於台北，專注於提供高品質的行動配件與卓越的客戶體驗。
-              </p>
-            </div>
-            
-            <div className="relative z-10 bg-[#232d3f] p-6 rounded-2xl border border-white/10">
-              <img src="https://picsum.photos/seed/office2/400/250" alt="2028" className="w-full h-40 object-cover rounded-xl mb-6" />
-              <h3 className="text-xl font-bold text-blue-400 mb-2">2028年 藍圖</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                計畫擴展至智慧穿戴與物聯網設備，為用戶精選全球創新品牌。
-              </p>
-            </div>
-            
-            <div className="relative z-10 bg-[#232d3f] p-6 rounded-2xl border border-white/10">
-              <img src="https://picsum.photos/seed/office3/400/250" alt="2030" className="w-full h-40 object-cover rounded-xl mb-6" />
-              <h3 className="text-xl font-bold text-blue-400 mb-2">2030年 願景</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                期許邁向國際，持續引領3C生活新潮流，打造無縫的智慧生態系。
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Brand Philosophy */}
