@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Lock } from 'lucide-react'
 import { api, setToken } from '../../lib/api'
+import { useStore } from '../../contexts/StoreContext'
 import type { AuthResponse } from '../../types'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
+  const store = useStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -35,7 +37,7 @@ export default function AdminLogin() {
             <Lock className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">管理後台登入</h1>
-          <p className="text-gray-500 mt-1">奈斯達科技Technology</p>
+          <p className="text-gray-500 mt-1">{store.site_name || '奈斯達科技'}{store.brand_subtitle || 'Technology'}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">

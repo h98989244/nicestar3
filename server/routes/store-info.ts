@@ -23,11 +23,17 @@ router.get('/', async (_req, res) => {
 
 // PUT /api/admin/store-info — 管理員：更新店家資訊
 router.put('/', requireAdmin, async (req: AuthRequest, res: Response) => {
-  const { site_name, tax_id, phone, address, logo_url, logo_storage_path } = req.body
+  const {
+    site_name, slogan, description, email, brand_name, brand_subtitle,
+    tax_id, phone, address, logo_url, logo_storage_path,
+  } = req.body
 
   const { data, error } = await supabaseAdmin
     .from('store_info')
-    .update({ site_name, tax_id, phone, address, logo_url, logo_storage_path })
+    .update({
+      site_name, slogan, description, email, brand_name, brand_subtitle,
+      tax_id, phone, address, logo_url, logo_storage_path,
+    })
     .eq('id', 1)
     .select()
     .single()

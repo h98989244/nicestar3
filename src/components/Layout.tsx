@@ -3,10 +3,12 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, User, ShoppingCart, Globe, Menu, X, LogOut } from 'lucide-react';
 import { getUserToken, getUserEmail, clearUserData } from '../lib/api';
 import { useCart } from '../contexts/CartContext';
+import { useStore } from '../contexts/StoreContext';
 
 export default function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const store = useStore();
   const isLogin = location.pathname === '/login';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -14,14 +16,12 @@ export default function Layout() {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { totalCount } = useCart();
 
-  // 切換頁面時自動關閉選單，並更新登入狀態
   useEffect(() => {
     setMobileMenuOpen(false);
     setUserMenuOpen(false);
     setUserEmail(getUserToken() ? getUserEmail() : null);
   }, [location.pathname]);
 
-  // 點擊外部關閉使用者選單
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
@@ -39,6 +39,8 @@ export default function Layout() {
     navigate('/');
   };
 
+  const logoInitial = (store.brand_name || 'N')[0].toUpperCase();
+
   if (isLogin) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -46,7 +48,7 @@ export default function Layout() {
           <Outlet />
         </main>
         <footer className="py-6 text-center text-sm text-gray-500">
-          © 2026 奈斯達科技 版權所有。
+          © {new Date().getFullYear()} {store.site_name || '奈斯達科技'} 版權所有。
         </footer>
       </div>
     );
@@ -56,7 +58,7 @@ export default function Layout() {
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
       {/* Top Bar */}
       <div className="bg-[#1a2332] text-white text-xs py-1.5 text-center">
-        奈斯達科技 - 智慧穿戴新未來
+        {store.site_name || '奈斯達科技'} - {store.slogan || '智慧穿戴新未來'}
       </div>
 
       {/* Header */}
@@ -66,12 +68,16 @@ export default function Layout() {
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                  N
-                </div>
+                {store.logo_url ? (
+                  <img src={store.logo_url} alt="Logo" className="w-8 h-8 rounded-lg object-contain" />
+                ) : (
+                  <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                    {logoInitial}
+                  </div>
+                )}
                 <div className="flex flex-col">
-                  <span className="font-bold text-lg leading-tight tracking-tight">nicestar3</span>
-                  <span className="text-[10px] leading-tight font-medium tracking-widest text-gray-500">TECHNOLOGY</span>
+                  <span className="font-bold text-lg leading-tight tracking-tight">{store.brand_name || 'nicestar3'}</span>
+                  <span className="text-[10px] leading-tight font-medium tracking-widest text-gray-500">{store.brand_subtitle || 'TECHNOLOGY'}</span>
                 </div>
               </Link>
             </div>
@@ -185,19 +191,23 @@ export default function Layout() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
               <Link to="/" className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                  N
-                </div>
+                {store.logo_url ? (
+                  <img src={store.logo_url} alt="Logo" className="w-8 h-8 rounded-lg object-contain" />
+                ) : (
+                  <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                    {logoInitial}
+                  </div>
+                )}
                 <div className="flex flex-col">
-                  <span className="font-bold text-lg leading-tight tracking-tight text-white">nicestar3</span>
-                  <span className="text-[10px] leading-tight font-medium tracking-widest text-gray-400">TECHNOLOGY</span>
+                  <span className="font-bold text-lg leading-tight tracking-tight text-white">{store.brand_name || 'nicestar3'}</span>
+                  <span className="text-[10px] leading-tight font-medium tracking-widest text-gray-400">{store.brand_subtitle || 'TECHNOLOGY'}</span>
                 </div>
               </Link>
               <p className="text-sm text-gray-400 max-w-xs mt-4">
-                致力於將科技融入生活，提供高品質的智慧穿戴設備與3C配件，打造無縫的智慧生活體驗。
+                {store.description || '致力於將科技融入生活，提供高品質的智慧穿戴設備與3C配件，打造無縫的智慧生活體驗。'}
               </p>
             </div>
-            
+
             <div>
               <h3 className="text-white font-semibold mb-4">公司</h3>
               <ul className="space-y-2 text-sm">
@@ -216,10 +226,10 @@ export default function Layout() {
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-400">
-              © 2026 奈斯達科技 版權所有。
+              © {new Date().getFullYear()} {store.site_name || '奈斯達科技'} 版權所有。
             </p>
           </div>
         </div>

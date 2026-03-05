@@ -1,6 +1,11 @@
 import { ShieldCheck, Zap, Lightbulb } from 'lucide-react';
+import { useStore } from '../contexts/StoreContext';
 
 export default function About() {
+  const store = useStore();
+  const displayName = store.site_name || '奈斯達科技';
+  const subtitle = store.brand_subtitle || 'TECHNOLOGY';
+
   return (
     <div className="bg-[#1a2332] text-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -8,8 +13,8 @@ export default function About() {
         <div className="text-center mb-20">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">關於我們</h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            我們致力於將科技融入生活，打造無縫的智慧生活體驗。<br />
-            奈斯達科技TECHNOLOGY，您的智慧生活領航人。
+            {store.description || '我們致力於將科技融入生活，打造無縫的智慧生活體驗。'}<br />
+            {displayName}{subtitle}，您的智慧生活領航人。
           </p>
           <button className="mt-8 px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full font-medium transition-colors backdrop-blur-sm">
             探索更多
@@ -55,7 +60,7 @@ export default function About() {
           <h2 className="text-3xl font-bold text-center mb-12">為什麼選擇我們</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-[#232d3f] rounded-2xl overflow-hidden border border-white/10">
-              <img src="https://picsum.photos/seed/choose1/400/300" alt="3C 專業知識" className="w-full h-48 object-cover" />
+              <img src="..\public\pic1.png" alt="3C 專業知識" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-lg font-bold mb-2">3C 專業知識</h3>
                 <p className="text-sm text-gray-400 leading-relaxed">
