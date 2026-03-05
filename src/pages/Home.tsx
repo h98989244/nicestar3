@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Smartphone, Watch, BatteryCharging, Shield, Headphones, Zap, Plus } from 'lucide-react'
 import { fetchPublic } from '../lib/api'
 import { useCart } from '../contexts/CartContext'
+import { useStore } from '../contexts/StoreContext'
 import type { Product, PaginatedResponse } from '../types'
 
 const categories = [
@@ -24,6 +25,7 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const { addItem } = useCart()
+  const store = useStore()
 
   useEffect(() => {
     fetchPublic<PaginatedResponse<Product>>('/api/products?limit=8')
@@ -45,7 +47,7 @@ export default function Home() {
         </div>
         <div className="relative z-10 w-full text-center px-4">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">
-            智慧穿戴新未來.
+            {store.slogan || '智慧穿戴新未來'}.
           </h1>
           <p className="text-2xl md:text-3xl text-white mb-8 font-light">立即選購。</p>
           <Link to="/products" className="inline-block bg-white text-gray-900 font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-colors">

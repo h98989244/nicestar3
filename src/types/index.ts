@@ -36,6 +36,11 @@ export interface ProductImage {
 export interface StoreInfo {
   id: number
   site_name: string
+  slogan: string
+  description: string
+  email: string
+  brand_name: string
+  brand_subtitle: string
   tax_id: string
   phone: string
   address: string

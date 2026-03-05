@@ -1,11 +1,17 @@
+import { useStore } from '../contexts/StoreContext';
+
 export default function Privacy() {
+  const store = useStore();
+  const displayName = store.site_name || '奈斯達科技';
+  const contactEmail = store.email || 'support@niceda.tech';
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <h1 className="text-3xl font-bold text-center text-gray-900 mb-12">隱私權政策</h1>
 
       <div className="bg-white rounded-2xl border border-gray-200 p-8 md:p-12 shadow-sm space-y-12">
         <p className="text-gray-600 leading-relaxed">
-          奈斯達科技TECHNOLOGY (以下簡稱「我們」) 承諾保護您的隱私。本政策旨在讓您了解我們如何蒐集、使用、揭露、移轉及儲存您的個人資料。請您詳細閱讀本隱私權政策，以了解我們對您個人資料的處理方式。
+          {displayName} (以下簡稱「我們」) 承諾保護您的隱私。本政策旨在讓您了解我們如何蒐集、使用、揭露、移轉及儲存您的個人資料。請您詳細閱讀本隱私權政策，以了解我們對您個人資料的處理方式。
         </p>
 
         <section>
@@ -39,7 +45,7 @@ export default function Privacy() {
         <section>
           <h2 className="text-xl font-bold text-gray-900 mb-4">5. 聯絡我們</h2>
           <p className="text-gray-600 leading-relaxed">
-            如果您對本隱私權政策有任何疑問或希望行使您的權利 (如存取、更正或刪除您的個人資料)，請透過電子郵件 <a href="mailto:support@niceda.tech" className="text-blue-600 hover:underline">support@niceda.tech</a> 聯繫我們的隱私團隊。
+            如果您對本隱私權政策有任何疑問或希望行使您的權利 (如存取、更正或刪除您的個人資料)，請透過電子郵件 <a href={`mailto:${contactEmail}`} className="text-blue-600 hover:underline">{contactEmail}</a> 聯繫我們的隱私團隊。
           </p>
         </section>
       </div>

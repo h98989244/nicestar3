@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Package, Settings, LogOut } from 'lucide-react'
 import { clearToken } from '../../lib/api'
+import { useStore } from '../../contexts/StoreContext'
 
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: '儀表板', end: true },
@@ -10,6 +11,7 @@ const navItems = [
 
 export default function AdminLayout() {
   const navigate = useNavigate()
+  const store = useStore()
 
   const handleLogout = () => {
     clearToken()
@@ -21,7 +23,7 @@ export default function AdminLayout() {
       {/* 側邊欄 */}
       <aside className="w-64 bg-[#1a2332] text-white flex flex-col flex-shrink-0">
         <div className="p-6 border-b border-white/10">
-          <h1 className="text-lg font-bold">奈斯達科技管理後台</h1>
+          <h1 className="text-lg font-bold">{store.site_name || '奈斯達科技'}管理後台</h1>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">

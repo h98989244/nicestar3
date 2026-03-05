@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { CartProvider } from './contexts/CartContext'
+import { StoreProvider } from './contexts/StoreContext'
 import Layout from './components/Layout'
 import AdminRoute from './components/AdminRoute'
 import Home from './pages/Home'
@@ -22,6 +23,7 @@ import StoreSettings from './pages/admin/StoreSettings'
 
 export default function App() {
   return (
+    <StoreProvider>
     <CartProvider>
     <Router>
       <Routes>
@@ -54,5 +56,6 @@ export default function App() {
       </Routes>
     </Router>
     </CartProvider>
+    </StoreProvider>
   )
 }
