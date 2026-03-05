@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { ChevronUp, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { fetchPublic } from '../lib/api'
 import { useCart } from '../contexts/CartContext'
 import type { Product, PaginatedResponse } from '../types'
@@ -10,23 +10,35 @@ function getProductImage(product: Product): string {
   return primary?.url || product.product_images?.[0]?.url || ''
 }
 
+const sortOptions = [
+  { label: '最新上架', sort: 'created_at', order: 'desc' },
+  { label: '價格：由低到高', sort: 'price', order: 'asc' },
+  { label: '價格：由高到低', sort: 'price', order: 'desc' },
+  { label: '名稱排序', sort: 'name', order: 'asc' },
+]
+
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [priceRange] = useState([100, 15000])
   const { addItem } = useCart()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
+  const [sortIndex, setSortIndex] = useState(0)
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
 
   const category = searchParams.get('category') || ''
   const search = searchParams.get('search') || ''
 
-  const loadProducts = (p = 1) => {
+  const loadProducts = useCallback((p = 1) => {
     setLoading(true)
-    const params = new URLSearchParams({ limit: '20', page: String(p) })
+    const { sort, order } = sortOptions[sortIndex]
+    const params = new URLSearchParams({ limit: '20', page: String(p), sort, order })
     if (category) params.set('category', category)
     if (search) params.set('search', search)
+    if (minPrice) params.set('min_price', minPrice)
+    if (maxPrice) params.set('max_price', maxPrice)
 
     fetchPublic<PaginatedResponse<Product>>(`/api/products?${params}`)
       .then(data => {
@@ -38,9 +50,13 @@ export default function Products() {
       })
       .catch(() => {})
       .finally(() => setLoading(false))
-  }
+  }, [category, search, sortIndex, minPrice, maxPrice])
 
-  useEffect(() => { loadProducts() }, [category, search])
+  useEffect(() => { loadProducts() }, [loadProducts])
+
+  const handlePriceFilter = () => {
+    loadProducts()
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -61,29 +77,41 @@ export default function Products() {
             <h2 className="font-semibold text-gray-900 mb-4">商品篩選</h2>
 
             {/* Price Range */}
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-3 cursor-pointer">
-                <h3 className="font-medium text-sm text-gray-900">價格區間</h3>
-                <ChevronUp className="h-4 w-4 text-gray-500" />
-              </div>
-              <div className="px-2 mb-4">
-                <div className="h-1 bg-gray-200 rounded-full relative">
-                  <div className="absolute h-full bg-blue-500 rounded-full" style={{ left: '10%', right: '20%' }}></div>
-                  <div className="absolute h-4 w-4 bg-white border-2 border-blue-500 rounded-full -top-1.5" style={{ left: '10%' }}></div>
-                  <div className="absolute h-4 w-4 bg-white border-2 border-blue-500 rounded-full -top-1.5" style={{ right: '20%' }}></div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
+            <div>
+              <h3 className="font-medium text-sm text-gray-900 mb-3">價格區間</h3>
+              <div className="flex items-center gap-2 mb-3">
                 <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">NT$</span>
-                  <input type="text" value={priceRange[0]} readOnly className="w-full pl-6 pr-3 py-1.5 border border-gray-300 rounded-md text-sm text-center" />
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs">NT$</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handlePriceFilter()}
+                    placeholder="最低"
+                    className="w-full pl-8 pr-2 py-1.5 border border-gray-300 rounded-md text-sm"
+                  />
                 </div>
                 <span className="text-gray-400">-</span>
                 <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">NT$</span>
-                  <input type="text" value={priceRange[1]} readOnly className="w-full pl-6 pr-3 py-1.5 border border-gray-300 rounded-md text-sm text-center" />
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs">NT$</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handlePriceFilter()}
+                    placeholder="最高"
+                    className="w-full pl-8 pr-2 py-1.5 border border-gray-300 rounded-md text-sm"
+                  />
                 </div>
               </div>
+              <button
+                onClick={handlePriceFilter}
+                className="w-full py-1.5 text-sm font-medium text-white bg-[#1a2332] rounded-lg hover:bg-slate-800 transition-colors"
+              >
+                套用
+              </button>
             </div>
           </div>
         </div>
@@ -93,11 +121,14 @@ export default function Products() {
           <div className="flex justify-end items-center mb-6">
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">排序方式：</span>
-              <select className="border border-gray-300 rounded-md py-1.5 pl-3 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-                <option>最新上架</option>
-                <option>價格：由低到高</option>
-                <option>價格：由高到低</option>
-                <option>熱銷排行</option>
+              <select
+                value={sortIndex}
+                onChange={(e) => setSortIndex(Number(e.target.value))}
+                className="border border-gray-300 rounded-md py-1.5 pl-3 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                {sortOptions.map((opt, i) => (
+                  <option key={i} value={i}>{opt.label}</option>
+                ))}
               </select>
             </div>
           </div>
