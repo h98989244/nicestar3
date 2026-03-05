@@ -65,6 +65,54 @@ router.post(
   },
 )
 
+// POST /api/admin/upload/logo — 上傳 Logo 圖片
+router.post(
+  '/logo',
+  requireAdmin,
+  upload.single('image'),
+  async (req: AuthRequest, res: Response) => {
+    const file = req.file
+    if (!file) {
+      res.status(400).json({ error: '請提供圖片檔案' })
+      return
+    }
+
+    const ext = file.originalname.split('.').pop() || 'png'
+    const fileName = `logo/logo-${Date.now()}.${ext}`
+
+    // 上傳到 Storage
+    const { error: uploadError } = await supabaseAdmin.storage
+      .from('product-images')
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+        upsert: false,
+      })
+
+    if (uploadError) {
+      res.status(500).json({ error: '上傳失敗：' + uploadError.message })
+      return
+    }
+
+    const { data: urlData } = supabaseAdmin.storage
+      .from('product-images')
+      .getPublicUrl(fileName)
+
+    // 自動更新 store_info 的 logo_url 和 logo_storage_path
+    await supabaseAdmin
+      .from('store_info')
+      .update({
+        logo_url: urlData.publicUrl,
+        logo_storage_path: fileName,
+      })
+      .eq('id', 1)
+
+    res.status(201).json({
+      url: urlData.publicUrl,
+      storage_path: fileName,
+    })
+  },
+)
+
 // DELETE /api/admin/upload/:path — 刪除圖片
 router.delete('/*', requireAdmin, async (req: AuthRequest, res: Response) => {
   const storagePath = req.params[0]
