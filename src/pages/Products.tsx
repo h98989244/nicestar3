@@ -76,42 +76,6 @@ export default function Products() {
                 </div>
               </div>
             </div>
-
-            <hr className="border-gray-100 mb-4" />
-
-            {/* Brands */}
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-3 cursor-pointer">
-                <h3 className="font-medium text-sm text-gray-900">品牌</h3>
-                <ChevronUp className="h-4 w-4 text-gray-500" />
-              </div>
-              <div className="space-y-2.5">
-                {['Apple', 'Logitech', 'Razer', 'Samsung', 'Sony', 'Belkin'].map(brand => (
-                  <label key={brand} className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                    <span className="text-sm text-gray-600">{brand}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <hr className="border-gray-100 mb-4" />
-
-            {/* Models */}
-            <div>
-              <div className="flex justify-between items-center mb-3 cursor-pointer">
-                <h3 className="font-medium text-sm text-gray-900">適用機型</h3>
-                <ChevronUp className="h-4 w-4 text-gray-500" />
-              </div>
-              <div className="space-y-2.5">
-                {['iPhone 15 Pro Max', 'iPhone 15', 'Apple Watch Series 9', 'iPad Pro', 'MacBook Air', 'AirPods Pro 2'].map(model => (
-                  <label key={model} className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                    <span className="text-sm text-gray-600">{model}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
 

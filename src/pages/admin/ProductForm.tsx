@@ -15,15 +15,11 @@ function slugify(text: string): string {
   return slug || `product-${Date.now()}`
 }
 
-const categories = [
-  { value: 'cases', label: '手機殼' },
-  { value: 'bands', label: '錶帶' },
-  { value: 'chargers', label: '充電器' },
-  { value: 'protectors', label: '螢幕保護貼' },
-  { value: 'audio', label: '耳機' },
-  { value: 'powerbanks', label: '行動電源' },
-  { value: 'accessories', label: '配件' },
-]
+interface CategoryOption {
+  id: string
+  name: string
+  slug: string
+}
 
 export default function ProductForm() {
   const { id: paramId } = useParams()
@@ -35,6 +31,7 @@ export default function ProductForm() {
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [images, setImages] = useState<ProductImage[]>([])
+  const [categories, setCategories] = useState<CategoryOption[]>([])
   const [form, setForm] = useState({
     name: '',
     slug: '',
@@ -50,6 +47,12 @@ export default function ProductForm() {
     specs: '{}',
     variants: '[]',
   })
+
+  useEffect(() => {
+    api.get<CategoryOption[]>('/api/admin/categories/admin-all')
+      .then(setCategories)
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (!productId) return
@@ -177,7 +180,7 @@ export default function ProductForm() {
               <select name="category" value={form.category} onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">選擇分類</option>
-                {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                {categories.map(c => <option key={c.id} value={c.slug}>{c.name}</option>)}
               </select>
             </div>
             <div>
