@@ -60,7 +60,7 @@ export default function About() {
           <h2 className="text-3xl font-bold text-center mb-12">為什麼選擇我們</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-[#232d3f] rounded-2xl overflow-hidden border border-white/10">
-              <img src="..\public\pic1.png" alt="3C 專業知識" className="w-full h-48 object-cover" />
+              <img src="/pic1.png" alt="3C 專業知識" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-lg font-bold mb-2">3C 專業知識</h3>
                 <p className="text-sm text-gray-400 leading-relaxed">
