@@ -46,7 +46,7 @@ export default function Layout() {
           <Outlet />
         </main>
         <footer className="py-6 text-center text-sm text-gray-500">
-          © 2024 奈斯達科技 版權所有。
+          © 2026 奈斯達科技 版權所有。
         </footer>
       </div>
     );
@@ -219,7 +219,7 @@ export default function Layout() {
           
           <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-400">
-              © 2024 奈斯達科技 版權所有。
+              © 2026 奈斯達科技 版權所有。
             </p>
           </div>
         </div>
