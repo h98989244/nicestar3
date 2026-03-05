@@ -26808,9 +26808,9 @@ var require_constants2 = __commonJS({
     };
     exports2.API_VERSION_HEADER_NAME = "X-Supabase-Api-Version";
     exports2.API_VERSIONS = {
-      "2026-01-01": {
-        timestamp: Date.parse("2026-01-01T00:00:00.0Z"),
-        name: "2026-01-01"
+      "2024-01-01": {
+        timestamp: Date.parse("2024-01-01T00:00:00.0Z"),
+        name: "2024-01-01"
       }
     };
     exports2.BASE64URL_REGEX = /^([a-z0-9_-]{4})*($|[a-z0-9_-]{3}$|[a-z0-9_-]{2}$)$/i;
@@ -27506,7 +27506,7 @@ var require_fetch = __commonJS({
       }
       let errorCode = void 0;
       const responseAPIVersion = (0, helpers_1.parseResponseAPIVersion)(error);
-      if (responseAPIVersion && responseAPIVersion.getTime() >= constants_1.API_VERSIONS["2026-01-01"].timestamp && typeof data === "object" && data && typeof data.code === "string") {
+      if (responseAPIVersion && responseAPIVersion.getTime() >= constants_1.API_VERSIONS["2024-01-01"].timestamp && typeof data === "object" && data && typeof data.code === "string") {
         errorCode = data.code;
       } else if (typeof data === "object" && data && typeof data.error_code === "string") {
         errorCode = data.error_code;
@@ -27535,7 +27535,7 @@ var require_fetch = __commonJS({
       var _a;
       const headers = Object.assign({}, options === null || options === void 0 ? void 0 : options.headers);
       if (!headers[constants_1.API_VERSION_HEADER_NAME]) {
-        headers[constants_1.API_VERSION_HEADER_NAME] = constants_1.API_VERSIONS["2026-01-01"].name;
+        headers[constants_1.API_VERSION_HEADER_NAME] = constants_1.API_VERSIONS["2024-01-01"].name;
       }
       if (options === null || options === void 0 ? void 0 : options.jwt) {
         headers["Authorization"] = `Bearer ${options.jwt}`;
@@ -28439,7 +28439,7 @@ var require_webauthn_errors = __commonJS({
             cause: error
           });
         } else if (
-          // @ts-ignore: `mediation` doesn't yet exist on CredentialCreationOptions but it's possible as of Sept 2026
+          // @ts-ignore: `mediation` doesn't yet exist on CredentialCreationOptions but it's possible as of Sept 2024
           options.mediation === "conditional" && ((_b = publicKey.authenticatorSelection) === null || _b === void 0 ? void 0 : _b.userVerification) === "required"
         ) {
           return new WebAuthnError({
@@ -42772,15 +42772,15 @@ var StorageFileApi = class extends BaseApiClient {
   *     {
   *       "name": "avatar1.png",
   *       "id": "e668cf7f-821b-4a2f-9dce-7dfa5dd1cfd2",
-  *       "updated_at": "2026-05-22T23:06:05.580Z",
-  *       "created_at": "2026-05-22T23:04:34.443Z",
-  *       "last_accessed_at": "2026-05-22T23:04:34.443Z",
+  *       "updated_at": "2024-05-22T23:06:05.580Z",
+  *       "created_at": "2024-05-22T23:04:34.443Z",
+  *       "last_accessed_at": "2024-05-22T23:04:34.443Z",
   *       "metadata": {
   *         "eTag": "\"c5e8c553235d9af30ef4f6e280790b92\"",
   *         "size": 32175,
   *         "mimetype": "image/png",
   *         "cacheControl": "max-age=3600",
-  *         "lastModified": "2026-05-22T23:06:05.574Z",
+  *         "lastModified": "2024-05-22T23:06:05.574Z",
   *         "contentLength": 32175,
   *         "httpStatusCode": 200
   *       }
@@ -42924,8 +42924,8 @@ var StorageBucketApi = class extends BaseApiClient {
   *     "allowed_mime_types": [
   *       "image/png"
   *     ],
-  *     "created_at": "2026-05-22T22:26:05.100Z",
-  *     "updated_at": "2026-05-22T22:26:05.100Z"
+  *     "created_at": "2024-05-22T22:26:05.100Z",
+  *     "updated_at": "2024-05-22T22:26:05.100Z"
   *   },
   *   "error": null
   * }
@@ -43157,8 +43157,8 @@ var StorageAnalyticsClient = class extends BaseApiClient {
   *     "name": "analytics-data",
   *     "type": "ANALYTICS",
   *     "format": "iceberg",
-  *     "created_at": "2026-05-22T22:26:05.100Z",
-  *     "updated_at": "2026-05-22T22:26:05.100Z"
+  *     "created_at": "2024-05-22T22:26:05.100Z",
+  *     "updated_at": "2024-05-22T22:26:05.100Z"
   *   },
   *   "error": null
   * }
@@ -43208,8 +43208,8 @@ var StorageAnalyticsClient = class extends BaseApiClient {
   *       "name": "analytics-data",
   *       "type": "ANALYTICS",
   *       "format": "iceberg",
-  *       "created_at": "2026-05-22T22:26:05.100Z",
-  *       "updated_at": "2026-05-22T22:26:05.100Z"
+  *       "created_at": "2024-05-22T22:26:05.100Z",
+  *       "updated_at": "2024-05-22T22:26:05.100Z"
   *     }
   *   ],
   *   "error": null
@@ -44638,8 +44638,32 @@ router2.get("/", async (_req, res) => {
   res.json(data);
 });
 router2.put("/", requireAdmin, async (req, res) => {
-  const { site_name, tax_id, phone, address, logo_url, logo_storage_path } = req.body;
-  const { data, error } = await supabaseAdmin.from("store_info").update({ site_name, tax_id, phone, address, logo_url, logo_storage_path }).eq("id", 1).select().single();
+  const {
+    site_name,
+    slogan,
+    description,
+    email,
+    brand_name,
+    brand_subtitle,
+    tax_id,
+    phone,
+    address,
+    logo_url,
+    logo_storage_path
+  } = req.body;
+  const { data, error } = await supabaseAdmin.from("store_info").update({
+    site_name,
+    slogan,
+    description,
+    email,
+    brand_name,
+    brand_subtitle,
+    tax_id,
+    phone,
+    address,
+    logo_url,
+    logo_storage_path
+  }).eq("id", 1).select().single();
   if (error) {
     res.status(400).json({ error: error.message });
     return;
