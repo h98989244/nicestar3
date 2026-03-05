@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, User, ShoppingCart, Globe, Menu, X, LogOut } from 'lucide-react';
+import { Search, User, ShoppingCart, Menu, X, LogOut } from 'lucide-react';
 import { getUserToken, getUserEmail, clearUserData } from '../lib/api';
 import { useCart } from '../contexts/CartContext';
 import { useStore } from '../contexts/StoreContext';
@@ -145,8 +145,6 @@ export default function Layout() {
                 )}
               </Link>
               <div className="hidden sm:flex items-center gap-1 text-gray-600 cursor-pointer hover:text-gray-900">
-                <Globe className="h-4 w-4" />
-                <span className="text-sm font-medium">TW</span>
               </div>
               <button className="md:hidden text-gray-600" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
                 {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
