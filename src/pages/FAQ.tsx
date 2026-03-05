@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function FAQ() {
@@ -91,9 +92,9 @@ export default function FAQ() {
 
       <div className="mt-16 text-center">
         <h3 className="text-lg font-bold text-gray-900 mb-4">還需要協助？</h3>
-        <button className="bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors mb-4 shadow-sm">
+        <Link to="/contact" className="inline-block bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors mb-4 shadow-sm">
           聯絡我們
-        </button>
+        </Link>
         <p className="text-sm text-gray-600">
           或透過 <a href="#" className="text-blue-600 hover:underline">線上客服</a> 與我們交談。
         </p>
