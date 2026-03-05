@@ -13,6 +13,7 @@ export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { totalCount } = useCart();
 
@@ -40,6 +41,14 @@ export default function Layout() {
   };
 
   const logoInitial = (store.brand_name || 'N')[0].toUpperCase();
+
+  const handleSearch = () => {
+    const q = searchQuery.trim();
+    if (!q) return;
+    navigate(`/products?search=${encodeURIComponent(q)}`);
+    setSearchQuery('');
+    setMobileMenuOpen(false);
+  };
 
   if (isLogin) {
     return (
@@ -89,16 +98,20 @@ export default function Layout() {
 
             {/* Search Bar */}
             <div className="hidden md:flex flex-1 max-w-md mx-8">
-              <div className="relative w-full">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-4 w-4 text-gray-400" />
+              <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="relative w-full">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                  <button type="submit" className="text-gray-400 hover:text-gray-600">
+                    <Search className="h-4 w-4" />
+                  </button>
                 </div>
                 <input
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-full leading-5 bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
                   placeholder="搜尋商品"
                 />
-              </div>
+              </form>
             </div>
 
             {/* Actions */}
@@ -160,16 +173,20 @@ export default function Layout() {
               <Link to="/contact" className="px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 font-medium">聯絡我們</Link>
             </nav>
             <div className="px-4 pb-4">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-4 w-4 text-gray-400" />
+              <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                  <button type="submit" className="text-gray-400 hover:text-gray-600">
+                    <Search className="h-4 w-4" />
+                  </button>
                 </div>
                 <input
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-full bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
                   placeholder="搜尋商品"
                 />
-              </div>
+              </form>
             </div>
           </div>
         )}
