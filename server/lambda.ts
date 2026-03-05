@@ -11,7 +11,15 @@ import ordersRouter from './routes/orders'
 
 const app = express()
 
-app.use(cors())
+app.use(cors({
+  origin: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}))
+
+// 明確處理所有 OPTIONS preflight 請求
+app.options('*', cors())
 
 // 自訂 body 解析：完全繞過 body-parser 的 content-length 檢查
 // serverless-http + API Gateway 會導致 content-length 與實際 body 大小不一致
