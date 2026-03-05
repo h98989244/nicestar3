@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { ChevronUp } from 'lucide-react'
+import { ChevronUp, X } from 'lucide-react'
 import { fetchPublic } from '../lib/api'
 import { useCart } from '../contexts/CartContext'
 import type { Product, PaginatedResponse } from '../types'
@@ -11,7 +11,7 @@ function getProductImage(product: Product): string {
 }
 
 export default function Products() {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [priceRange] = useState([100, 15000])
   const { addItem } = useCart()
   const [products, setProducts] = useState<Product[]>([])
@@ -19,10 +19,11 @@ export default function Products() {
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
 
+  const category = searchParams.get('category') || ''
+  const search = searchParams.get('search') || ''
+
   const loadProducts = (p = 1) => {
     setLoading(true)
-    const category = searchParams.get('category') || ''
-    const search = searchParams.get('search') || ''
     const params = new URLSearchParams({ limit: '20', page: String(p) })
     if (category) params.set('category', category)
     if (search) params.set('search', search)
@@ -39,14 +40,22 @@ export default function Products() {
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { loadProducts() }, [searchParams])
+  useEffect(() => { loadProducts() }, [category, search])
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col md:flex-row gap-8">
         {/* Sidebar Filters */}
         <div className="w-full md:w-64 flex-shrink-0">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">3C 精選配件</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">3C 精選配件</h1>
+          {search && (
+            <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
+              <span>搜尋：<strong className="text-gray-900">{search}</strong></span>
+              <button onClick={() => setSearchParams(category ? { category } : {})} className="text-gray-400 hover:text-red-500">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
 
           <div className="bg-white rounded-xl border border-gray-200 p-5">
             <h2 className="font-semibold text-gray-900 mb-4">商品篩選</h2>
