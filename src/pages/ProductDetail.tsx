@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { fetchPublic } from '../lib/api'
+import { useCart } from '../contexts/CartContext'
 import type { Product } from '../types'
 
 export default function ProductDetail() {
@@ -11,6 +12,7 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState('description')
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
   const [activeImage, setActiveImage] = useState(0)
+  const { addItem } = useCart()
 
   useEffect(() => {
     fetchPublic<Product>(`/api/products/${id}`)
@@ -116,9 +118,9 @@ export default function ProductDetail() {
           <p className="text-gray-600 mb-6 leading-relaxed">{description}</p>
 
           <div className="flex items-baseline gap-3 mb-2">
-            <span className="text-3xl font-bold text-gray-900">${price.toFixed(2)}</span>
+            <span className="text-3xl font-bold text-gray-900">NT${Math.round(price)}</span>
             {comparePrice && comparePrice > price && (
-              <span className="text-lg text-gray-400 line-through">${comparePrice.toFixed(2)}</span>
+              <span className="text-lg text-gray-400 line-through">NT${Math.round(comparePrice)}</span>
             )}
           </div>
           {stock <= 10 && (
@@ -151,12 +153,19 @@ export default function ProductDetail() {
           </div>}
 
           <div className="flex gap-4 mt-auto">
-            <button className="flex-1 bg-blue-600 text-white py-3.5 rounded-xl font-medium hover:bg-blue-700 transition-colors">
+            <button
+              onClick={() => addItem(product, 1, selectedVariants)}
+              className="flex-1 bg-blue-600 text-white py-3.5 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+            >
               加入購物車
             </button>
-            <button className="flex-1 bg-orange-500 text-white py-3.5 rounded-xl font-medium hover:bg-orange-600 transition-colors">
+            <Link
+              to="/checkout"
+              onClick={() => addItem(product, 1, selectedVariants)}
+              className="flex-1 bg-orange-500 text-white py-3.5 rounded-xl font-medium hover:bg-orange-600 transition-colors text-center"
+            >
               立即購買
-            </button>
+            </Link>
           </div>
         </div>
       </div>

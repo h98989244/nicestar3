@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ChevronUp } from 'lucide-react'
 import { fetchPublic } from '../lib/api'
+import { useCart } from '../contexts/CartContext'
 import type { Product, PaginatedResponse } from '../types'
 
 function getProductImage(product: Product): string {
@@ -11,7 +12,8 @@ function getProductImage(product: Product): string {
 
 export default function Products() {
   const [searchParams] = useSearchParams()
-  const [priceRange] = useState([20, 500])
+  const [priceRange] = useState([100, 15000])
+  const { addItem } = useCart()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [totalPages, setTotalPages] = useState(1)
@@ -64,12 +66,12 @@ export default function Products() {
               </div>
               <div className="flex items-center gap-2">
                 <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">NT$</span>
                   <input type="text" value={priceRange[0]} readOnly className="w-full pl-6 pr-3 py-1.5 border border-gray-300 rounded-md text-sm text-center" />
                 </div>
                 <span className="text-gray-400">-</span>
                 <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">NT$</span>
                   <input type="text" value={priceRange[1]} readOnly className="w-full pl-6 pr-3 py-1.5 border border-gray-300 rounded-md text-sm text-center" />
                 </div>
               </div>
@@ -156,12 +158,15 @@ export default function Products() {
                       )}
                       <div className="mt-auto">
                         <div className="flex items-baseline gap-2 mb-4">
-                          <span className="text-lg font-bold text-gray-900">${Number(product.price).toFixed(2)}</span>
+                          <span className="text-lg font-bold text-gray-900">NT${Math.round(Number(product.price))}</span>
                           {product.compare_at_price && Number(product.compare_at_price) > Number(product.price) && (
-                            <span className="text-sm text-gray-400 line-through">${Number(product.compare_at_price).toFixed(2)}</span>
+                            <span className="text-sm text-gray-400 line-through">NT${Math.round(Number(product.compare_at_price))}</span>
                           )}
                         </div>
-                        <button className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                        <button
+                          onClick={() => addItem(product)}
+                          className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                        >
                           加入購物車
                         </button>
                       </div>
