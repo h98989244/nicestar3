@@ -12,6 +12,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
+import OrderSuccess from './pages/OrderSuccess'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminLayout from './pages/admin/AdminLayout'
 import Dashboard from './pages/admin/Dashboard'
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="terms" element={<Terms />} />
           <Route path="privacy" element={<Privacy />} />
+          <Route path="order/success/:orderNumber" element={<OrderSuccess />} />
         </Route>
 
         {/* 管理後台路由 */}

@@ -7,6 +7,7 @@ import storeInfoRouter from './routes/store-info'
 import uploadRouter from './routes/upload'
 import authRouter from './routes/auth'
 import memberAuthRouter from './routes/member-auth'
+import ordersRouter from './routes/orders'
 
 const app = express()
 
@@ -43,6 +44,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 
 // 公開路由
 app.use('/api/auth', memberAuthRouter)
+app.use('/api/orders', ordersRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/store-info', storeInfoRouter)
 
