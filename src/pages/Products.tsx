@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { X } from 'lucide-react'
 import { fetchPublic } from '../lib/api'
@@ -31,14 +31,22 @@ export default function Products() {
   const category = searchParams.get('category') || ''
   const search = searchParams.get('search') || ''
 
-  const loadProducts = useCallback((p = 1) => {
+  // 用 ref 保存最新的篩選值，避免閉包問題
+  const filtersRef = useRef({ sortIndex, minPrice, maxPrice })
+  filtersRef.current = { sortIndex, minPrice, maxPrice }
+
+  const doFetch = (p = 1, overrides?: { sortIndex?: number }) => {
     setLoading(true)
-    const { sort, order } = sortOptions[sortIndex]
+    const si = overrides?.sortIndex ?? filtersRef.current.sortIndex
+    const { sort, order } = sortOptions[si]
+    const mp = filtersRef.current.minPrice
+    const xp = filtersRef.current.maxPrice
+
     const params = new URLSearchParams({ limit: '20', page: String(p), sort, order })
     if (category) params.set('category', category)
     if (search) params.set('search', search)
-    if (minPrice) params.set('min_price', minPrice)
-    if (maxPrice) params.set('max_price', maxPrice)
+    if (mp) params.set('min_price', mp)
+    if (xp) params.set('max_price', xp)
 
     fetchPublic<PaginatedResponse<Product>>(`/api/products?${params}`)
       .then(data => {
@@ -50,12 +58,21 @@ export default function Products() {
       })
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [category, search, sortIndex, minPrice, maxPrice])
+  }
 
-  useEffect(() => { loadProducts() }, [loadProducts])
+  // URL 參數變動時重新載入
+  useEffect(() => {
+    doFetch()
+  }, [category, search])
+
+  const handleSortChange = (e: { target: { value: string } }) => {
+    const newIndex = Number(e.target.value)
+    setSortIndex(newIndex)
+    doFetch(1, { sortIndex: newIndex })
+  }
 
   const handlePriceFilter = () => {
-    loadProducts()
+    doFetch()
   }
 
   return (
@@ -123,7 +140,7 @@ export default function Products() {
               <span className="text-sm text-gray-600">排序方式：</span>
               <select
                 value={sortIndex}
-                onChange={(e) => setSortIndex(Number(e.target.value))}
+                onChange={handleSortChange}
                 className="border border-gray-300 rounded-md py-1.5 pl-3 pr-8 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 {sortOptions.map((opt, i) => (
@@ -183,7 +200,7 @@ export default function Products() {
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
                     <button
                       key={p}
-                      onClick={() => loadProducts(p)}
+                      onClick={() => doFetch(p)}
                       className={`px-3 py-1.5 rounded text-sm ${
                         p === page ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                       }`}
