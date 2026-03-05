@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Trash2, Plus, Minus, ShoppingCart } from 'lucide-react'
 import { useCart } from '../contexts/CartContext'
+import { getUserToken } from '../lib/api'
 
 function getProductImage(product: { product_images?: { url: string; is_primary: boolean }[] }): string {
   const primary = product.product_images?.find(img => img.is_primary)
@@ -10,13 +11,74 @@ function getProductImage(product: { product_images?: { url: string; is_primary: 
 
 const SHIPPING_STANDARD = 80
 const SHIPPING_EXPRESS = 150
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 export default function Checkout() {
-  const { items, updateQuantity, removeItem, totalPrice, totalCount } = useCart()
+  const { items, updateQuantity, removeItem, totalPrice, totalCount, clearCart } = useCart()
+  const navigate = useNavigate()
   const [shipping, setShipping] = useState<'standard' | 'express'>('standard')
+  const [step, setStep] = useState<'cart' | 'info'>('cart')
+  const [submitting, setSubmitting] = useState(false)
+
+  // 收件資訊
+  const [recipientName, setRecipientName] = useState('')
+  const [recipientPhone, setRecipientPhone] = useState('')
+  const [recipientAddress, setRecipientAddress] = useState('')
+  const [note, setNote] = useState('')
 
   const shippingCost = totalCount === 0 ? 0 : shipping === 'express' ? SHIPPING_EXPRESS : SHIPPING_STANDARD
   const grandTotal = totalPrice + shippingCost
+
+  const handleSubmitOrder = async () => {
+    if (!recipientName.trim() || !recipientPhone.trim() || !recipientAddress.trim()) {
+      alert('請填寫完整收件資訊')
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      }
+      const userToken = getUserToken()
+      if (userToken) {
+        headers['Authorization'] = `Bearer ${userToken}`
+      }
+
+      const res = await fetch(`${API_BASE}/api/orders`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          recipient_name: recipientName.trim(),
+          recipient_phone: recipientPhone.trim(),
+          recipient_address: recipientAddress.trim(),
+          shipping_method: shipping,
+          shipping_cost: shippingCost,
+          note: note.trim(),
+          items: items.map(item => ({
+            product_id: item.product.id,
+            product_name: item.product.name,
+            price: Number(item.product.price),
+            quantity: item.quantity,
+            selected_variants: item.selectedVariants,
+          })),
+        }),
+      })
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: '下單失敗' }))
+        throw new Error(body.error || '下單失敗')
+      }
+
+      const data = await res.json()
+      clearCart()
+      navigate(`/order/success/${data.order_number}`)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '下單失敗，請稍後再試')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   if (items.length === 0) {
     return (
@@ -36,101 +98,169 @@ export default function Checkout() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">購物車</h1>
+      {/* 步驟指示器 */}
+      <div className="flex items-center justify-center mb-8 gap-4">
+        <button
+          onClick={() => setStep('cart')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
+            step === 'cart' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
+          }`}
+        >
+          <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">1</span>
+          確認購物車
+        </button>
+        <div className="w-8 h-px bg-gray-300" />
+        <div
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
+            step === 'info' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
+          }`}
+        >
+          <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">2</span>
+          填寫收件資訊
+        </div>
+      </div>
+
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        {step === 'cart' ? '購物車' : '收件資訊'}
+      </h1>
 
       <div className="flex flex-col md:flex-row gap-8">
-        {/* Cart Items */}
+        {/* 左側內容 */}
         <div className="flex-1 space-y-4">
-          {items.map(item => (
-            <div key={item.product.id} className="bg-white rounded-xl border border-gray-200 p-4 flex gap-4">
-              {/* Image */}
-              <Link to={`/product/${item.product.id}`} className="w-20 h-20 flex-shrink-0 bg-gray-50 rounded-lg p-2">
-                {getProductImage(item.product) ? (
-                  <img src={getProductImage(item.product)} alt={item.product.name} className="w-full h-full object-contain" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">暫無圖片</div>
-                )}
-              </Link>
-
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <Link to={`/product/${item.product.id}`} className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2">
-                  {item.product.name}
-                </Link>
-                {Object.keys(item.selectedVariants).length > 0 && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    {Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${v}`).join('、')}
-                  </p>
-                )}
-                <div className="flex items-center justify-between mt-3">
-                  <div className="flex items-center border border-gray-200 rounded-lg">
-                    <button
-                      onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                      className="px-2.5 py-1 text-gray-500 hover:text-gray-700"
-                    >
-                      <Minus className="h-3.5 w-3.5" />
-                    </button>
-                    <span className="px-3 py-1 text-sm font-medium text-gray-900 min-w-[2rem] text-center">
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                      className="px-2.5 py-1 text-gray-500 hover:text-gray-700"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                    </button>
+          {step === 'cart' ? (
+            <>
+              {/* 購物車商品 */}
+              {items.map(item => (
+                <div key={item.product.id} className="bg-white rounded-xl border border-gray-200 p-4 flex gap-4">
+                  <Link to={`/product/${item.product.id}`} className="w-20 h-20 flex-shrink-0 bg-gray-50 rounded-lg p-2">
+                    {getProductImage(item.product) ? (
+                      <img src={getProductImage(item.product)} alt={item.product.name} className="w-full h-full object-contain" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">暫無圖片</div>
+                    )}
+                  </Link>
+                  <div className="flex-1 min-w-0">
+                    <Link to={`/product/${item.product.id}`} className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2">
+                      {item.product.name}
+                    </Link>
+                    {Object.keys(item.selectedVariants).length > 0 && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {Object.entries(item.selectedVariants).map(([k, v]) => `${k}: ${v}`).join('、')}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-center border border-gray-200 rounded-lg">
+                        <button
+                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          className="px-2.5 py-1 text-gray-500 hover:text-gray-700"
+                        >
+                          <Minus className="h-3.5 w-3.5" />
+                        </button>
+                        <span className="px-3 py-1 text-sm font-medium text-gray-900 min-w-[2rem] text-center">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          className="px-2.5 py-1 text-gray-500 hover:text-gray-700"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">
+                        NT${Math.round(Number(item.product.price) * item.quantity)}
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-sm font-bold text-gray-900">
-                    NT${Math.round(Number(item.product.price) * item.quantity)}
-                  </span>
+                  <button
+                    onClick={() => removeItem(item.product.id)}
+                    className="self-start p-1.5 text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+
+              {/* 運送方式 */}
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="font-medium text-gray-900 mb-4">運送方式</h3>
+                <div className="space-y-3">
+                  <label className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer ${shipping === 'standard' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`}>
+                    <input
+                      type="radio"
+                      name="shipping"
+                      checked={shipping === 'standard'}
+                      onChange={() => setShipping('standard')}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <div className="flex-1">
+                      <span className="block text-sm font-medium text-gray-900">標準配送 (3-5 工作日)</span>
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">NT${SHIPPING_STANDARD}</span>
+                  </label>
+                  <label className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer ${shipping === 'express' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`}>
+                    <input
+                      type="radio"
+                      name="shipping"
+                      checked={shipping === 'express'}
+                      onChange={() => setShipping('express')}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <div className="flex-1">
+                      <span className="block text-sm font-medium text-gray-900">快速配送 (1-2 工作日)</span>
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">NT${SHIPPING_EXPRESS}</span>
+                  </label>
                 </div>
               </div>
-
-              {/* Delete */}
-              <button
-                onClick={() => removeItem(item.product.id)}
-                className="self-start p-1.5 text-gray-400 hover:text-red-500 transition-colors"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-
-          {/* Shipping */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h3 className="font-medium text-gray-900 mb-4">運送方式</h3>
-            <div className="space-y-3">
-              <label className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer ${shipping === 'standard' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`}>
+            </>
+          ) : (
+            /* 收件資訊表單 */
+            <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">收件人姓名 *</label>
                 <input
-                  type="radio"
-                  name="shipping"
-                  checked={shipping === 'standard'}
-                  onChange={() => setShipping('standard')}
-                  className="w-4 h-4 text-blue-600"
+                  type="text"
+                  value={recipientName}
+                  onChange={e => setRecipientName(e.target.value)}
+                  placeholder="請輸入姓名"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <div className="flex-1">
-                  <span className="block text-sm font-medium text-gray-900">標準配送 (3-5 工作日)</span>
-                </div>
-                <span className="text-sm font-medium text-gray-900">NT${SHIPPING_STANDARD}</span>
-              </label>
-              <label className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer ${shipping === 'express' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`}>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">聯絡電話 *</label>
                 <input
-                  type="radio"
-                  name="shipping"
-                  checked={shipping === 'express'}
-                  onChange={() => setShipping('express')}
-                  className="w-4 h-4 text-blue-600"
+                  type="tel"
+                  value={recipientPhone}
+                  onChange={e => setRecipientPhone(e.target.value)}
+                  placeholder="例如：0912345678"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <div className="flex-1">
-                  <span className="block text-sm font-medium text-gray-900">快速配送 (1-2 工作日)</span>
-                </div>
-                <span className="text-sm font-medium text-gray-900">NT${SHIPPING_EXPRESS}</span>
-              </label>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">收件地址 *</label>
+                <input
+                  type="text"
+                  value={recipientAddress}
+                  onChange={e => setRecipientAddress(e.target.value)}
+                  placeholder="請輸入完整地址"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">備註（選填）</label>
+                <textarea
+                  value={note}
+                  onChange={e => setNote(e.target.value)}
+                  placeholder="有任何需要備註的事項嗎？"
+                  rows={3}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Order Summary */}
+        {/* 右側訂單摘要 */}
         <div className="w-full md:w-80 flex-shrink-0">
           <div className="bg-blue-50 rounded-2xl p-6 sticky top-24">
             <h2 className="text-lg font-bold text-gray-900 mb-6">訂單摘要</h2>
@@ -162,9 +292,30 @@ export default function Checkout() {
               </div>
             </div>
 
-            <button className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors">
-              前往結帳
-            </button>
+            {step === 'cart' ? (
+              <button
+                onClick={() => setStep('info')}
+                className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+              >
+                前往填寫收件資訊
+              </button>
+            ) : (
+              <div className="space-y-3">
+                <button
+                  onClick={handleSubmitOrder}
+                  disabled={submitting}
+                  className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? '處理中...' : '確認下單'}
+                </button>
+                <button
+                  onClick={() => setStep('cart')}
+                  className="w-full border border-gray-300 text-gray-700 py-3 rounded-xl font-medium hover:bg-white transition-colors"
+                >
+                  返回購物車
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
