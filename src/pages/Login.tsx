@@ -63,28 +63,6 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-8">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">或使用以下帳號繼續</span>
-            </div>
-          </div>
-
-          <div className="mt-6 space-y-3">
-            <button className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors">
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-              使用 Google 帳號登入
-            </button>
-            <button className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-black text-white rounded-lg font-medium hover:bg-gray-900 transition-colors">
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.04 2.26-.74 3.58-.79 1.56-.06 2.84.61 3.61 1.76-3.15 1.88-2.65 6.1.4 7.34-.74 1.8-1.66 3.04-2.67 3.86zm-4.3-13.8c-.28-2.1 1.58-4.04 3.7-4.18.3 2.2-1.8 4.14-3.7 4.18z"/></svg>
-              使用 Apple 帳號登入
-            </button>
-          </div>
-        </div>
-
         <div className="mt-8 text-center text-sm text-gray-600">
           還沒有帳號？{' '}
           <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
