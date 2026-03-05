@@ -1,16 +1,41 @@
-import { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Search, User, ShoppingCart, Globe, Menu, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Search, User, ShoppingCart, Globe, Menu, X, LogOut } from 'lucide-react';
+import { getUserToken, getUserEmail, clearUserData } from '../lib/api';
 
 export default function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isLogin = location.pathname === '/login';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // 切換頁面時自動關閉選單
+  // 切換頁面時自動關閉選單，並更新登入狀態
   useEffect(() => {
     setMobileMenuOpen(false);
+    setUserMenuOpen(false);
+    setUserEmail(getUserToken() ? getUserEmail() : null);
   }, [location.pathname]);
+
+  // 點擊外部關閉使用者選單
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    clearUserData();
+    setUserEmail(null);
+    setUserMenuOpen(false);
+    navigate('/');
+  };
 
   if (isLogin) {
     return (
@@ -19,7 +44,7 @@ export default function Layout() {
           <Outlet />
         </main>
         <footer className="py-6 text-center text-sm text-gray-500">
-          © 2024 nicestar3 TECHNOLOGY. 版權所有。
+          © 2024 奈斯達科技 版權所有。
         </footer>
       </div>
     );
@@ -73,9 +98,36 @@ export default function Layout() {
 
             {/* Actions */}
             <div className="flex items-center space-x-4">
-              <Link to="/login" className="text-gray-600 hover:text-gray-900">
-                <User className="h-5 w-5" />
-              </Link>
+              {userEmail ? (
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900"
+                  >
+                    <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                      {userEmail[0].toUpperCase()}
+                    </div>
+                  </button>
+                  {userMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900 truncate">{userEmail}</p>
+                      </div>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        登出
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link to="/login" className="text-gray-600 hover:text-gray-900">
+                  <User className="h-5 w-5" />
+                </Link>
+              )}
               <Link to="/checkout" className="text-gray-600 hover:text-gray-900 relative">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="absolute -top-1.5 -right-1.5 bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
@@ -163,7 +215,7 @@ export default function Layout() {
           
           <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-400">
-              © 2024 nicestar3 TECHNOLOGY. 版權所有。
+              © 2024 奈斯達科技 版權所有。
             </p>
           </div>
         </div>

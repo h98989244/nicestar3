@@ -51,3 +51,33 @@ export async function requireAdmin(req: AuthRequest, res: Response, next: NextFu
     res.status(401).json({ error: '驗證失敗' })
   }
 }
+
+export async function requireUser(req: AuthRequest, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization
+  if (!authHeader?.startsWith('Bearer ')) {
+    res.status(401).json({ error: '未提供授權令牌' })
+    return
+  }
+
+  const token = authHeader.slice(7)
+
+  try {
+    const resp = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+      },
+    })
+
+    if (!resp.ok) {
+      res.status(401).json({ error: '無效的授權令牌' })
+      return
+    }
+
+    const user = await resp.json() as { id: string; email?: string }
+    req.user = { id: user.id, email: user.email || '' }
+    next()
+  } catch {
+    res.status(401).json({ error: '驗證失敗' })
+  }
+}

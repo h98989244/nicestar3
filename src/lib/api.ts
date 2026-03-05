@@ -29,6 +29,32 @@ export function clearToken() {
   localStorage.removeItem('admin_token')
 }
 
+// 會員 token 管理
+export function getUserToken(): string | null {
+  return localStorage.getItem('user_token')
+}
+
+export function setUserToken(token: string) {
+  localStorage.setItem('user_token', token)
+}
+
+export function clearUserToken() {
+  localStorage.removeItem('user_token')
+}
+
+export function getUserEmail(): string | null {
+  return localStorage.getItem('user_email')
+}
+
+export function setUserEmail(email: string) {
+  localStorage.setItem('user_email', email)
+}
+
+export function clearUserData() {
+  localStorage.removeItem('user_token')
+  localStorage.removeItem('user_email')
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken()
   const headers: Record<string, string> = {
@@ -52,6 +78,39 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   }
 
   return res.json()
+}
+
+async function userRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const token = getUserToken()
+  const headers: Record<string, string> = {
+    ...(options.headers as Record<string, string>),
+  }
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
+  if (options.body && !(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json'
+  }
+
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers })
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ error: '請求失敗' }))
+    throw new Error(body.error || `HTTP ${res.status}`)
+  }
+
+  return res.json()
+}
+
+export const userApi = {
+  get: <T>(path: string) => userRequest<T>(path),
+  post: <T>(path: string, body?: unknown) =>
+    userRequest<T>(path, {
+      method: 'POST',
+      body: body instanceof FormData ? body : JSON.stringify(body),
+    }),
 }
 
 export const api = {
