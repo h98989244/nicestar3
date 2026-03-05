@@ -75,10 +75,7 @@ export default function Layout() {
                     {logoInitial}
                   </div>
                 )}
-                <div className="flex flex-col">
-                  <span className="font-bold text-lg leading-tight tracking-tight">{store.brand_name || 'nicestar3'}</span>
-                  <span className="text-[10px] leading-tight font-medium tracking-widest text-gray-500">{store.brand_subtitle || 'TECHNOLOGY'}</span>
-                </div>
+                <span className="font-bold text-lg leading-tight tracking-tight">{store.site_name || '奈斯達科技有限公司'}</span>
               </Link>
             </div>
 
@@ -196,10 +193,7 @@ export default function Layout() {
                     {logoInitial}
                   </div>
                 )}
-                <div className="flex flex-col">
-                  <span className="font-bold text-lg leading-tight tracking-tight text-white">{store.brand_name || 'nicestar3'}</span>
-                  <span className="text-[10px] leading-tight font-medium tracking-widest text-gray-400">{store.brand_subtitle || 'TECHNOLOGY'}</span>
-                </div>
+                <span className="font-bold text-lg leading-tight tracking-tight text-white">{store.site_name || '奈斯達科技有限公司'}</span>
               </Link>
               <p className="text-sm text-gray-400 max-w-xs mt-4">
                 {store.description || '致力於將科技融入生活，提供高品質的智慧穿戴設備與3C配件，打造無縫的智慧生活體驗。'}
