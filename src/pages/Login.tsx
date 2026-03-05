@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { EyeOff, Eye } from 'lucide-react'
 import { setUserToken, setUserEmail, getUserToken } from '../lib/api'
+import { useStore } from '../contexts/StoreContext'
 
 export default function Login() {
   const navigate = useNavigate()
+  const store = useStore()
+  const logoInitial = (store.brand_name || 'N')[0].toUpperCase()
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -104,13 +107,14 @@ export default function Login() {
       <div className="p-8">
         <div className="flex justify-center mb-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-              N
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-lg leading-tight tracking-tight text-blue-900">nicestar3</span>
-              <span className="text-[10px] leading-tight font-medium tracking-widest text-blue-800">TECHNOLOGY</span>
-            </div>
+            {store.logo_url ? (
+              <img src={store.logo_url} alt="Logo" className="w-8 h-8 rounded-lg object-contain" />
+            ) : (
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                {logoInitial}
+              </div>
+            )}
+            <span className="font-bold text-lg leading-tight tracking-tight text-blue-900">{store.site_name || '奈斯達科技有限公司'}</span>
           </Link>
         </div>
 
