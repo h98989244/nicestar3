@@ -4,7 +4,7 @@ import { useStore } from '../contexts/StoreContext';
 export default function About() {
   const store = useStore();
   const displayName = store.site_name || '奈斯達科技';
-  const subtitle = store.brand_subtitle || 'TECHNOLOGY';
+  const subtitle = store.brand_subtitle || '';
 
   return (
     <div className="bg-[#1a2332] text-white min-h-screen">
@@ -69,7 +69,7 @@ export default function About() {
               </div>
             </div>
             <div className="bg-[#232d3f] rounded-2xl overflow-hidden border border-white/10">
-              <img src="https://picsum.photos/seed/choose2/400/300" alt="卓越服務" className="w-full h-48 object-cover" />
+              <img src="/pic2.png" alt="卓越服務" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-lg font-bold mb-2">卓越服務</h3>
                 <p className="text-sm text-gray-400 leading-relaxed">
@@ -78,7 +78,7 @@ export default function About() {
               </div>
             </div>
             <div className="bg-[#232d3f] rounded-2xl overflow-hidden border border-white/10">
-              <img src="https://picsum.photos/seed/choose3/400/300" alt="獨家精選" className="w-full h-48 object-cover" />
+              <img src="/pic3.png" alt="獨家精選" className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-lg font-bold mb-2">獨家精選</h3>
                 <p className="text-sm text-gray-400 leading-relaxed">
