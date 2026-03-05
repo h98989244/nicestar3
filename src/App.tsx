@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { CartProvider } from './contexts/CartContext'
 import Layout from './components/Layout'
 import AdminRoute from './components/AdminRoute'
 import Home from './pages/Home'
@@ -20,6 +21,7 @@ import StoreSettings from './pages/admin/StoreSettings'
 
 export default function App() {
   return (
+    <CartProvider>
     <Router>
       <Routes>
         {/* 前台路由 */}
@@ -49,5 +51,6 @@ export default function App() {
         </Route>
       </Routes>
     </Router>
+    </CartProvider>
   )
 }

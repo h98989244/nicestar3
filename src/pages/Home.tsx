@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Smartphone, Watch, BatteryCharging, Shield, Headphones, Zap, Plus } from 'lucide-react'
 import { fetchPublic } from '../lib/api'
+import { useCart } from '../contexts/CartContext'
 import type { Product, PaginatedResponse } from '../types'
 
 const categories = [
@@ -20,19 +21,15 @@ function getProductImage(product: Product): string {
 }
 
 export default function Home() {
-  const [products, setProducts] = useState<Array<{ id: string; name: string; price: number; image: string }>>([])
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const { addItem } = useCart()
 
   useEffect(() => {
     fetchPublic<PaginatedResponse<Product>>('/api/products?limit=8')
       .then(data => {
         if (data?.products?.length) {
-          setProducts(data.products.map(p => ({
-            id: p.id,
-            name: p.name,
-            price: Number(p.price),
-            image: getProductImage(p),
-          })))
+          setProducts(data.products)
         }
       })
       .catch(() => {})
@@ -91,8 +88,8 @@ export default function Home() {
             {products.map((product) => (
               <div key={product.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex flex-col">
                 <Link to={`/product/${product.id}`} className="block aspect-square bg-gray-50 relative p-6">
-                  {product.image ? (
-                    <img src={product.image} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
+                  {getProductImage(product) ? (
+                    <img src={getProductImage(product)} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm">暫無圖片</div>
                   )}
@@ -102,8 +99,11 @@ export default function Home() {
                     {product.name}
                   </Link>
                   <div className="mt-auto">
-                    <div className="text-lg font-bold text-gray-900 mb-4">${product.price}</div>
-                    <button className="w-full bg-[#1a2332] text-white py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors">
+                    <div className="text-lg font-bold text-gray-900 mb-4">NT${Math.round(Number(product.price))}</div>
+                    <button
+                      onClick={() => addItem(product)}
+                      className="w-full bg-[#1a2332] text-white py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors"
+                    >
                       加入購物車
                     </button>
                   </div>

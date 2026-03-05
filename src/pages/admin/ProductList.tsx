@@ -105,7 +105,7 @@ export default function ProductList() {
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{product.category || '-'}</td>
                     <td className="px-6 py-4 text-sm text-gray-900 text-right font-medium">
-                      ${Number(product.price).toFixed(2)}
+                      NT${Math.round(Number(product.price))}
                     </td>
                     <td className="px-6 py-4 text-sm text-right">
                       <span className={product.stock_quantity <= 5 ? 'text-red-600 font-medium' : 'text-gray-600'}>

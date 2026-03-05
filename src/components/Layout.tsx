@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, User, ShoppingCart, Globe, Menu, X, LogOut } from 'lucide-react';
 import { getUserToken, getUserEmail, clearUserData } from '../lib/api';
+import { useCart } from '../contexts/CartContext';
 
 export default function Layout() {
   const location = useLocation();
@@ -11,6 +12,7 @@ export default function Layout() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const { totalCount } = useCart();
 
   // 切換頁面時自動關閉選單，並更新登入狀態
   useEffect(() => {
@@ -130,9 +132,11 @@ export default function Layout() {
               )}
               <Link to="/checkout" className="text-gray-600 hover:text-gray-900 relative">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-1.5 -right-1.5 bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                  0
-                </span>
+                {totalCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    {totalCount > 99 ? '99+' : totalCount}
+                  </span>
+                )}
               </Link>
               <div className="hidden sm:flex items-center gap-1 text-gray-600 cursor-pointer hover:text-gray-900">
                 <Globe className="h-4 w-4" />

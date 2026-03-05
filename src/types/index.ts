@@ -54,6 +54,12 @@ export interface PaginatedResponse<T> {
   }
 }
 
+export interface CartItem {
+  product: Product
+  quantity: number
+  selectedVariants: Record<string, string>
+}
+
 export interface AuthResponse {
   user: { id: string; email: string }
   access_token: string
