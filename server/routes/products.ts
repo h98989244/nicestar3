@@ -35,6 +35,10 @@ router.get('/', async (req, res) => {
   if (featured === 'true') query = query.eq('is_featured', true)
   if (search) query = query.ilike('name', `%${search}%`)
 
+  const { min_price, max_price } = req.query as Record<string, string>
+  if (min_price) query = query.gte('price', parseFloat(min_price))
+  if (max_price) query = query.lte('price', parseFloat(max_price))
+
   const validSorts = ['created_at', 'price', 'name']
   const sortField = validSorts.includes(sort) ? sort : 'created_at'
   const ascending = order === 'asc'
